@@ -1,0 +1,2063 @@
+html
+<!DOCTYPE html>
+<html lang="kn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#040d08">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>AgriGuard Pro // Tesla-Grade Smart Farm OS</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&family=Noto+Sans+Kannada:wght@400;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            forestBase: '#040d08',
+            glassCard: 'rgba(12, 26, 18, 0.68)',
+            glassElevated: 'rgba(18, 38, 27, 0.82)',
+            teslaEmerald: '#10b981',
+            neonMint: '#34d399',
+            teslaCyan: '#38bdf8',
+            teslaAmber: '#f59e0b',
+            teslaCrimson: '#f43f5e'
+          },
+          fontFamily: {
+            sans: ['Inter', 'Noto Sans Kannada', 'sans-serif'],
+            display: ['Space Grotesk', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+            kannada: ['Noto Sans Kannada', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    html, body {
+      height: 100%;
+      height: 100dvh;
+      margin: 0;
+      padding: 0;
+      background-color: #040d08;
+      background-image: 
+        radial-gradient(circle at 18% 12%, rgba(16, 185, 129, 0.22) 0%, transparent 45%),
+        radial-gradient(circle at 85% 28%, rgba(52, 211, 153, 0.14) 0%, transparent 48%),
+        radial-gradient(circle at 50% 90%, rgba(6, 78, 59, 0.35) 0%, transparent 60%),
+        linear-gradient(180deg, #05120b 0%, #030a06 100%);
+      color: #f8fafc;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .tesla-glass {
+      background: rgba(12, 26, 18, 0.65);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.6), inset 0 1px 0 0 rgba(255, 255, 255, 0.07);
+    }
+
+    .tesla-pill {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .tesla-pill:active { transform: scale(0.96); }
+
+    @keyframes scanBeam {
+      0%, 100% { opacity: 0.45; }
+      50% { opacity: 1; filter: drop-shadow(0 0 8px #10b981); }
+    }
+    .beam-pulse { animation: scanBeam 2.4s infinite ease-in-out; }
+
+    @keyframes orbBreathe {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 24px rgba(16, 185, 129, 0.45), 0 0 48px rgba(56, 189, 248, 0.25); }
+      50% { transform: scale(1.06); box-shadow: 0 0 36px rgba(16, 185, 129, 0.75), 0 0 64px rgba(56, 189, 248, 0.45); }
+    }
+    @keyframes orbListening {
+      0% { transform: scale(1); box-shadow: 0 0 25px rgba(244, 63, 94, 0.7), 0 0 55px rgba(245, 158, 11, 0.5); }
+      100% { transform: scale(1.16); box-shadow: 0 0 45px rgba(244, 63, 94, 0.95), 0 0 85px rgba(56, 189, 248, 0.7); }
+    }
+    .voice-orb {
+      background: conic-gradient(from 180deg at 50% 50%, #10b981 0deg, #38bdf8 120deg, #a855f7 240deg, #10b981 360deg);
+      animation: orbBreathe 3s infinite ease-in-out;
+    }
+    .voice-orb.listening {
+      background: conic-gradient(from 0deg at 50% 50%, #f43f5e 0deg, #f59e0b 140deg, #38bdf8 260deg, #f43f5e 360deg);
+      animation: orbListening 0.65s infinite alternate ease-in-out;
+    }
+
+    .tab-view { display: none; }
+    .tab-view.active {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 0%;
+      min-height: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .strobe-active { animation: flashStrobe 0.35s infinite alternate ease-in-out; }
+    @keyframes flashStrobe {
+      from { background-color: rgba(244, 63, 94, 0.94); }
+      to { background-color: rgba(15, 5, 10, 0.98); }
+    }
+
+    .zone-tile { transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1); }
+    .zone-tile.selected {
+      box-shadow: inset 0 0 0 2.5px #ffffff, 0 0 18px rgba(52, 211, 153, 0.45);
+      transform: scale(0.99);
+    }
+
+    ::-webkit-scrollbar { width: 4px; height: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 99px; }
+  </style>
+</head>
+<body class="font-sans flex flex-col justify-between overflow-hidden select-none">
+
+  <!-- ================= TESLA MINIMALIST TOP HEADER ================= -->
+  <header class="px-4 pt-3 pb-2 flex items-center justify-between flex-shrink-0 z-30">
+    <div>
+      <div class="flex items-center gap-2">
+        <span class="w-2.5 h-2.5 rounded-full bg-teslaEmerald shadow-[0_0_10px_#10b981]"></span>
+        <h1 class="font-display text-lg font-bold tracking-tight text-white">AgriGuard <span class="text-neonMint font-normal">Pro</span></h1>
+      </div>
+      <p id="headerLocationSub" class="text-[11px] text-emerald-200/60 font-medium pl-4">Bailhongal Sector • Kalpavruksha PU</p>
+    </div>
+
+    <div class="flex items-center gap-2">
+      <div id="cloudBadge" class="tesla-glass px-3 py-1.5 rounded-full flex items-center gap-2 text-[11px] font-mono">
+        <span id="cloudDot" class="w-2 h-2 rounded-full bg-teslaEmerald animate-pulse"></span>
+        <span id="cloudText" class="text-emerald-100 font-semibold">92% • LIVE</span>
+      </div>
+      <button onclick="toggleConfigModal()" class="tesla-glass w-9 h-9 rounded-full flex items-center justify-center text-gray-300 hover:text-white transition" title="Settings">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= VIEW 1: TESLA VEHICLE-STYLE FARM COMMAND HUB ================= -->
+  <div id="tabDashboard" class="tab-view active">
+    <main class="max-w-xl mx-auto w-full px-4 pt-1 pb-32 space-y-4">
+
+      <section class="tesla-glass rounded-3xl p-4 relative overflow-hidden">
+        <div class="flex items-center justify-between mb-1">
+          <span id="systemStateBadge" class="text-[11px] font-mono font-bold tracking-wider uppercase text-neonMint flex items-center gap-1.5">
+            <span class="w-1.5 h-1.5 rounded-full bg-neonMint"></span> SENTRY GUARD ARMED
+          </span>
+          <span id="threatLevelBadge" class="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+            PERIMETER SECURE
+          </span>
+        </div>
+
+        <div class="relative h-44 w-full flex items-center justify-center my-1">
+          <svg viewBox="0 0 360 180" class="w-full h-full max-w-[340px]">
+            <defs>
+              <linearGradient id="fieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#064e3b" stop-opacity="0.65"/>
+                <stop offset="100%" stop-color="#022c22" stop-opacity="0.85"/>
+              </linearGradient>
+              <radialGradient id="radarGlow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#10b981" stop-opacity="0.28"/>
+                <stop offset="100%" stop-color="#10b981" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+
+            <ellipse cx="180" cy="95" rx="150" ry="68" fill="url(#radarGlow)"/>
+            <polygon points="180,26 315,92 180,158 45,92" fill="url(#fieldGrad)" stroke="rgba(52,211,153,0.3)" stroke-width="1.5"/>
+            <line x1="145" y1="44" x2="280" y2="110" stroke="rgba(16,185,129,0.18)" stroke-width="2" stroke-dasharray="4 4"/>
+            <line x1="115" y1="59" x2="250" y2="125" stroke="rgba(16,185,129,0.18)" stroke-width="2" stroke-dasharray="4 4"/>
+            <line x1="85" y1="74" x2="220" y2="140" stroke="rgba(16,185,129,0.18)" stroke-width="2" stroke-dasharray="4 4"/>
+
+            <polygon id="svgFenceOuter" points="180,18 328,92 180,166 32,92" fill="none" stroke="#10b981" stroke-width="2" class="beam-pulse"/>
+            <polygon id="svgFenceInner" points="180,22 321,92 180,162 39,92" fill="none" stroke="#38bdf8" stroke-width="1" stroke-dasharray="6 3" opacity="0.75"/>
+
+            <circle cx="180" cy="18" r="4.5" fill="#34d399"/>
+            <circle cx="328" cy="92" r="4.5" fill="#34d399"/>
+            <circle cx="180" cy="166" r="4.5" fill="#34d399"/>
+            <circle cx="32" cy="92" r="4.5" fill="#34d399"/>
+
+            <rect x="168" y="80" width="24" height="24" rx="6" fill="#064e3b" stroke="#34d399" stroke-width="1.5"/>
+            <text x="180" y="95" text-anchor="middle" fill="#ecfdf5" font-size="9" font-family="monospace" font-weight="bold">AI</text>
+          </svg>
+
+          <div class="absolute top-1 left-1 bg-black/45 backdrop-blur-md border border-white/10 rounded-xl px-2.5 py-1">
+            <div class="text-[9px] text-gray-400 font-mono">SOIL MOISTURE</div>
+            <div class="text-sm font-display font-bold text-neonMint"><span id="gaugeSoil">43.2</span>%</div>
+          </div>
+
+          <div class="absolute top-1 right-1 bg-black/45 backdrop-blur-md border border-white/10 rounded-xl px-2.5 py-1 text-right">
+            <div class="text-[9px] text-gray-400 font-mono">FIELD TEMP</div>
+            <div class="text-sm font-display font-bold text-white"><span id="gaugeTemp">31.5</span>°C</div>
+          </div>
+
+          <div class="absolute bottom-1 left-1 bg-black/45 backdrop-blur-md border border-teslaCyan/30 hover:border-teslaCyan rounded-xl px-2.5 py-1 cursor-pointer transition" onclick="openSolarDiagnosticModal()">
+            <div class="text-[9px] text-teslaCyan font-mono">SOLAR PV 🔍</div>
+            <div class="text-xs font-mono font-bold text-teslaCyan"><span id="gaugeSolar">18.2</span>V ⚡</div>
+          </div>
+
+          <div class="absolute bottom-1 right-1 bg-black/45 backdrop-blur-md border border-white/10 rounded-xl px-2.5 py-1 text-right cursor-pointer" onclick="switchCompartment('fieldmap')">
+            <div class="text-[9px] text-gray-400 font-mono">NEXT IRRIGATION</div>
+            <div id="dashNextIrrigBadge" class="text-xs font-mono font-bold text-amber-300">-- hrs</div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-4 gap-2.5 pt-2 border-t border-white/10">
+          <button id="btnQuickArm" onclick="toggleArmState()" class="tesla-pill rounded-2xl py-2.5 flex flex-col items-center justify-center gap-1 border-neonMint/40 bg-emerald-500/15 text-neonMint">
+            <span class="text-lg">🛡️</span>
+            <span class="text-[10px] font-semibold tracking-wide" id="labelQuickArm">Armed</span>
+          </button>
+
+          <button id="btnQuickPump" onclick="togglePumpQuick()" class="tesla-pill rounded-2xl py-2.5 flex flex-col items-center justify-center gap-1 text-gray-300">
+            <span class="text-lg">💧</span>
+            <span class="text-[10px] font-semibold tracking-wide" id="labelQuickPump">Pump Off</span>
+          </button>
+
+          <button onclick="triggerBioCloud('TIGER')" class="tesla-pill rounded-2xl py-2.5 flex flex-col items-center justify-center gap-1 text-gray-300 hover:text-amber-300">
+            <span class="text-lg">🐅</span>
+            <span class="text-[10px] font-semibold tracking-wide">Deterrent</span>
+          </button>
+
+          <button onclick="triggerBioCloud('SIREN')" class="tesla-pill rounded-2xl py-2.5 flex flex-col items-center justify-center gap-1 text-gray-300 hover:text-rose-400">
+            <span class="text-lg">🚨</span>
+            <span class="text-[10px] font-semibold tracking-wide">Siren</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- HERO ONE-TAP GEMINI VOICE ASSISTANT CARD -->
+      <section class="tesla-glass rounded-3xl p-4 border border-emerald-400/25 relative overflow-hidden">
+        <div class="flex items-center justify-between mb-2">
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-mono uppercase tracking-wider text-teslaCyan font-bold">✦ Gemini 3.5 Agro-Voice</span>
+            <span id="dashAiSourcePill" class="text-[9px] px-2 py-0.5 rounded-full bg-white/5 text-emerald-200/80 font-mono">READY</span>
+          </div>
+          <div class="flex bg-black/40 rounded-full p-0.5 border border-white/10">
+            <button id="dashLangKn" onclick="setAiLanguage('kn')" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-teslaEmerald text-black">ಕನ್ನಡ</button>
+            <button id="dashLangEn" onclick="setAiLanguage('en')" class="px-2 py-0.5 rounded-full text-[10px] text-gray-400">EN</button>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-3.5 my-2">
+          <button id="heroVoiceOrbBtn" onclick="startInstantVoiceAssistant()" class="voice-orb w-16 h-16 rounded-full flex items-center justify-center flex-shrink-0 text-white shadow-xl active:scale-95 transition" title="Tap to Speak">
+            <svg class="w-7 h-7 drop-shadow" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.91-3c-.49 0-.9.36-.98.85C16.52 14.2 14.47 16 12 16s-4.52-1.8-4.93-4.15a.998.998 0 00-.98-.85c-.61 0-1.09.54-1 1.14.49 3 2.89 5.35 5.91 5.78V20c0 .55.45 1 1 1s1-.45 1-1v-2.08a6.993 6.993 0 005.91-5.78c.1-.6-.39-1.14-1-1.14z"/>
+            </svg>
+          </button>
+
+          <div class="flex-1 min-w-0">
+            <p id="voiceOrbHeadline" class="text-sm font-bold text-white font-kannada">ಮಾತನಾಡಲು ಮೈಕ್ ಒತ್ತಿರಿ (Tap Mic to Ask)</p>
+            <p class="text-[11px] text-emerald-200/70 font-kannada leading-snug mt-0.5">
+              ಉದಾ: "ಯಾವ ಬೆಳೆಗೆ ಮೊದಲು ನೀರು ಹಾಯಿಸಬೇಕು?" ಅಥವಾ "ಬೈಲಹೊಂಗಲ ಹವಾಮಾನ ಹೇಗಿದೆ?"
+            </p>
+          </div>
+        </div>
+
+        <div id="dashAiOutputBox" class="mt-3 bg-black/45 border border-white/10 rounded-2xl p-3 text-xs sm:text-sm text-emerald-50 font-kannada leading-relaxed">
+          ನಮಸ್ಕಾರ! ನಿಮ್ಮ ಹೊಲದ ಎಲ್ಲಾ ಬೆಳೆಗಳ ತೇವಾಂಶ, ನೀರಾವರಿ ಸಮಯ, ಹವಾಮಾನ ಅಥವಾ ಬೆಳೆ ರಕ್ಷಣೆಯ ಬಗ್ಗೆ ಕೇಳಲು ಮೇಲಿನ ಮೈಕ್ ಬಟನ್ ಒತ್ತಿ ಮಾತನಾಡಿ.
+        </div>
+
+        <div class="mt-2 flex items-center justify-between gap-2">
+          <button onclick="VoicePlayer.play(document.getElementById('dashAiOutputBox').innerText, state.aiLanguage === 'kn' ? 'kn-IN' : 'en-IN')" class="px-3.5 py-1.5 rounded-full bg-teslaCyan/20 border border-teslaCyan/40 text-teslaCyan font-bold text-[11px] flex items-center gap-1.5">
+            <span>🔊</span> <span id="dashListenText">ಕೇಳಿ (Listen)</span>
+          </button>
+          <button onclick="openSolarDiagnosticModal()" class="px-3 py-1.5 rounded-full bg-amber-500/15 border border-amber-400/30 text-amber-300 font-bold text-[11px]">
+            ☀️ Solar &amp; Weather Check
+          </button>
+        </div>
+
+        <div class="flex gap-1.5 overflow-x-auto pt-2.5 pb-0.5">
+          <button onclick="requestDashAi('ನನ್ನ ಹೊಲದ ಎಲ್ಲಾ ಬೆಳೆಗಳಿಗೆ ನೀರಾವರಿ ವೇಳಾಪಟ್ಟಿ ಮತ್ತು ಯಾವ ಬೆಳೆಗೆ ಮೊದಲು ನೀರು ಬೇಕು ಎಂದು ತಿಳಿಸಿ')" class="tesla-pill px-3 py-1.5 rounded-full text-[11px] text-neonMint whitespace-nowrap font-medium">
+            🗺️ ಬೆಳೆಗಳ ನೀರಾವರಿ ವೇಳಾಪಟ್ಟಿ
+          </button>
+          <button onclick="askInstantWeather('Bailhongal')" class="tesla-pill px-3 py-1.5 rounded-full text-[11px] text-teslaCyan whitespace-nowrap font-medium">
+            🌦️ ಬೈಲಹೊಂಗಲ ಹವಾಮಾನ
+          </button>
+          <button onclick="requestDashAi('ಪ್ರಸ್ತುತ ಮಣ್ಣಿನ ತೇವಾಂಶ ಮತ್ತು ಪಂಪ್ ಸಲಹೆ ನೀಡಿ')" class="tesla-pill px-3 py-1.5 rounded-full text-[11px] text-emerald-300 whitespace-nowrap font-medium">
+            💧 ನೀರಾವರಿ ಸ್ಥಿತಿ
+          </button>
+        </div>
+      </section>
+
+      <!-- TESLA CLEAN EXPANDABLE CONTROL ROWS -->
+      <section class="tesla-glass rounded-3xl divide-y divide-white/10 overflow-hidden">
+        <div class="p-3.5 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-semibold text-white flex items-center gap-2"><span>📡</span> 3-Tier IR Perimeter Sensors</span>
+            <span class="text-[10px] font-mono text-gray-400">Break: <b id="tier1BreakMs" class="text-neonMint">0 ms</b></span>
+          </div>
+          <div class="grid grid-cols-3 gap-1.5 font-mono text-[10px]">
+            <div id="tier1Box" class="bg-black/40 border border-emerald-500/30 rounded-xl p-2 text-center">
+              <div class="text-gray-400">TIER 1 (1ft)</div>
+              <div id="tier1Badge" class="text-neonMint font-bold mt-0.5">OK</div>
+            </div>
+            <div id="tier2Box" class="bg-black/40 border border-emerald-500/30 rounded-xl p-2 text-center">
+              <div class="text-gray-400">TIER 2 (2.8ft)</div>
+              <div id="tier2Badge" class="text-neonMint font-bold mt-0.5">OK</div>
+            </div>
+            <div id="tier3Box" class="bg-black/40 border border-emerald-500/30 rounded-xl p-2 text-center">
+              <div class="text-gray-400">TIER 3 (5ft)</div>
+              <div id="tier3Badge" class="text-neonMint font-bold mt-0.5">OK</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="p-3.5 flex items-center justify-between gap-3">
+          <div>
+            <div class="text-xs font-semibold text-white flex items-center gap-1.5"><span>⏱️</span> Smart Drip Pump</div>
+            <div class="text-[11px] text-gray-400 font-mono">Timer: <span id="pumpCountdownDisplay" class="text-teslaCyan font-bold">00:00</span></div>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <button onclick="setPumpDuration(15, this)" class="duration-btn px-2.5 py-1.5 rounded-xl bg-teslaCyan/20 border border-teslaCyan text-teslaCyan text-[11px] font-mono font-bold">15m</button>
+            <button onclick="setPumpDuration(30, this)" class="duration-btn px-2.5 py-1.5 rounded-xl bg-white/5 border border-white/10 text-gray-300 text-[11px] font-mono">30m</button>
+            <button onclick="dispatchPumpCloud(true)" class="px-3 py-1.5 rounded-xl bg-teslaEmerald text-black font-bold text-[11px]">START</button>
+            <button onclick="dispatchPumpCloud(false)" class="px-2.5 py-1.5 rounded-xl bg-rose-500/20 border border-rose-500/40 text-rose-300 font-bold text-[11px]">OFF</button>
+          </div>
+        </div>
+
+        <details class="p-3.5 group">
+          <summary class="text-xs font-semibold text-amber-300 cursor-pointer flex items-center justify-between list-none">
+            <span>👨‍⚖️ Exhibition Stage Simulation (Test Mode)</span>
+            <span class="text-[10px] text-gray-400 group-open:rotate-180 transition">▼</span>
+          </summary>
+          <div class="grid grid-cols-3 gap-1.5 mt-3 font-mono text-[10px]">
+            <button onclick="simulateStageEvent('BOAR')" class="py-2 px-1.5 rounded-xl bg-amber-500/15 border border-amber-500/40 text-amber-300">🐗 Boar (&lt;2s)</button>
+            <button onclick="simulateStageEvent('CRAWL')" class="py-2 px-1.5 rounded-xl bg-rose-500/15 border border-rose-500/40 text-rose-300">🪖 Crawl (≥2s)</button>
+            <button onclick="simulateStageEvent('HUMAN')" class="py-2 px-1.5 rounded-xl bg-rose-500/15 border border-rose-500/40 text-rose-300">🚶 Human</button>
+            <button onclick="simulateSoilADC(3620)" class="py-2 px-1.5 rounded-xl bg-orange-500/15 border border-orange-500/40 text-orange-300">🏜️ Dry Soil</button>
+            <button onclick="simulateSoilADC(1450)" class="py-2 px-1.5 rounded-xl bg-sky-500/15 border border-sky-500/40 text-sky-300">💧 Wet Soil</button>
+            <button onclick="simulateStageEvent('RESET')" class="py-2 px-1.5 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-300">🔄 Reset</button>
+          </div>
+        </details>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ================= VIEW 2: FIELD & CROP MAP + dM/dt ENGINE ================= -->
+  <div id="tabFieldMap" class="tab-view">
+    <main class="max-w-xl mx-auto w-full px-4 pt-2 pb-32 space-y-4">
+
+      <section class="tesla-glass rounded-3xl p-4 border border-emerald-400/25">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-sm sm:text-base font-bold text-neonMint font-kannada">🗺️ ಹೊಲದ ವಿವರ &amp; ನಕ್ಷೆ (Field &amp; Crop Map)</h2>
+            <p class="text-[11px] text-emerald-200/70 font-kannada mt-0.5">ಪ್ರತಿ ಬೆಳೆಯ ವಿಸ್ತೀರ್ಣ ಗುರುತಿಸಿ dM/dt ನೀರಾವರಿ ಸಮಯ ತಿಳಿಯಿರಿ</p>
+          </div>
+          <span class="text-[10px] font-mono px-2.5 py-1 rounded-full bg-teslaCyan/15 border border-teslaCyan/30 text-teslaCyan">dM/dt ENGINE</span>
+        </div>
+      </section>
+
+      <section class="tesla-glass rounded-3xl p-4 space-y-3.5">
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-white font-kannada">ಹಂತ 1 — ಜಮೀನಿನ ಒಟ್ಟು ವಿಸ್ತೀರ್ಣ (Total Farm Area)</span>
+            <span class="text-[10px] font-mono text-neonMint">STEP 1</span>
+          </div>
+          <div class="flex gap-2">
+            <input id="fmTotalArea" type="number" min="0.5" step="0.5" value="4" oninput="onFarmAreaOrUnitChange()" class="flex-1 bg-black/50 border border-white/15 rounded-2xl px-3.5 py-2.5 text-sm font-mono font-bold text-white focus:outline-none focus:border-neonMint">
+            <select id="fmAreaUnit" onchange="onFarmAreaOrUnitChange()" class="bg-black/50 border border-white/15 rounded-2xl px-3 py-2.5 text-xs font-semibold text-neonMint focus:outline-none">
+              <option value="Acres" selected>Acres (ಎಕರೆ)</option>
+              <option value="Guntas">Guntas (ಗುಂಟೆ)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-white/10 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-white font-kannada">ಹಂತ 2 — ಮಣ್ಣಿನ ವಿಧ (Soil Type &amp; K_soil)</span>
+            <span class="text-[10px] font-mono text-teslaCyan">STEP 2</span>
+          </div>
+          <select id="fmSoilType" onchange="syncSoilTypeFromFieldMap(this.value)" class="w-full bg-black/50 border border-white/15 rounded-2xl px-3.5 py-2.5 text-xs text-white font-kannada focus:outline-none focus:border-teslaCyan">
+            <option value="0.85" selected>Black Cotton Soil / ಎರೆಯ ಮಣ್ಣು (K_soil = 0.85)</option>
+            <option value="1.25">Red Sandy Loam / ಕೆಂಪು ಮರಳು ಮಣ್ಣು (K_soil = 1.25)</option>
+            <option value="1.00">Alluvial / Mixed Soil / ಮಿಶ್ರ ಮಣ್ಣು (K_soil = 1.00)</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="tesla-glass rounded-3xl p-4 space-y-3">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-white font-kannada">ಹಂತ 3 — ಒಂದೇ ಬೆಳೆ ಅಥವಾ ಬಹು ಬೆಳೆಗಳು (Crop Pattern)</span>
+          <span class="text-[10px] font-mono text-amber-300">STEP 3</span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <button id="btnModeSingle" onclick="setCropMode('single')" class="py-2.5 px-2 rounded-2xl border border-white/15 bg-white/5 text-gray-300 text-[11px] font-semibold font-kannada text-center transition">
+            🌾 ಇಡೀ ಹೊಲದಲ್ಲಿ ಒಂದೇ ಬೆಳೆ<br><span class="text-[9px] font-mono opacity-75">(Single Crop • 100%)</span>
+          </button>
+          <button id="btnModeMulti" onclick="setCropMode('multi')" class="py-2.5 px-2 rounded-2xl border border-neonMint bg-emerald-500/20 text-neonMint text-[11px] font-semibold font-kannada text-center transition">
+            🧩 ಬೇರೆ ಬೇರೆ ಬಹು ಬೆಳೆಗಳು<br><span class="text-[9px] font-mono opacity-75">(Multiple Crops)</span>
+          </button>
+        </div>
+
+        <div id="multiCropCountBox" class="pt-2 space-y-2">
+          <span class="text-xs text-emerald-100 font-kannada block">ಎಷ್ಟು ವಿಧದ ಬೆಳೆಗಳಿವೆ? (How many crops?)</span>
+          <div class="grid grid-cols-3 gap-2">
+            <button onclick="setMultiCropCount(2)" class="crop-count-btn py-2 rounded-xl border border-white/15 bg-black/40 text-xs font-mono font-bold text-gray-300">2 Crops</button>
+            <button onclick="setMultiCropCount(3)" class="crop-count-btn py-2 rounded-xl border border-neonMint bg-emerald-500/20 text-xs font-mono font-bold text-neonMint">3 Crops</button>
+            <button onclick="setMultiCropCount(4)" class="crop-count-btn py-2 rounded-xl border border-white/15 bg-black/40 text-xs font-mono font-bold text-gray-300">4 Crops</button>
+          </div>
+        </div>
+
+        <div id="cropRowsContainer" class="space-y-2.5 pt-1"></div>
+
+        <div id="areaValidationBar" class="rounded-2xl p-2.5 bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-between gap-2 text-[11px] font-mono">
+          <span id="areaValidationMsg" class="text-neonMint font-bold">✓ Total: 4.0 / 4.0 Acres (100%)</span>
+          <button onclick="autoBalanceZones()" class="px-2.5 py-1 rounded-xl bg-white/10 hover:bg-white/20 text-white text-[10px] font-semibold">Auto-Balance</button>
+        </div>
+      </section>
+
+      <section class="tesla-glass rounded-3xl p-4 space-y-3">
+        <div class="flex items-center justify-between">
+          <div>
+            <span class="text-xs font-bold text-white font-kannada">ಹಂತ 4 — ಹೊಲದ ನಕ್ಷೆ ಮಾರ್ಕಪ್ (Visual Field Zone Map)</span>
+            <p class="text-[10px] text-gray-400 font-kannada">ವಲಯವನ್ನು ಟ್ಯಾಪ್ ಮಾಡಿ ವಿಸ್ತೀರ್ಣ ಹೊಂದಿಸಿ</p>
+          </div>
+          <span class="text-[10px] font-mono text-neonMint">STEP 4</span>
+        </div>
+
+        <div id="fieldMapCanvas" class="w-full min-h-[190px] rounded-2xl bg-black/50 border border-white/15 p-2 flex flex-wrap gap-1.5 overflow-hidden"></div>
+
+        <div id="selectedZoneInspector" class="bg-black/45 border border-white/10 rounded-2xl p-3 flex items-center justify-between gap-2">
+          <div class="min-w-0">
+            <span class="text-[10px] font-mono text-gray-400 block">SELECTED PLOT ZONE</span>
+            <span id="selectedZoneTitle" class="text-xs font-bold text-neonMint truncate block">Zone A • Onion (40%)</span>
+          </div>
+          <div class="flex items-center gap-1.5 flex-shrink-0">
+            <button onclick="adjustSelectedZonePct(-5)" class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white font-mono font-bold text-sm">-5%</button>
+            <button onclick="adjustSelectedZonePct(5)" class="w-9 h-9 rounded-xl bg-emerald-500/25 border border-emerald-400/50 text-neonMint font-mono font-bold text-sm">+5%</button>
+          </div>
+        </div>
+
+        <button onclick="saveAndApplyFieldMap()" class="w-full py-3 rounded-2xl bg-gradient-to-r from-teslaEmerald to-teslaCyan text-black font-bold text-xs sm:text-sm font-kannada shadow-lg active:scale-98 transition">
+          💾 ಹೊಲದ ನಕ್ಷೆ ಉಳಿಸಿ ಮತ್ತು ಅನ್ವಯಿಸಿ (Save &amp; Apply Field Map)
+        </button>
+      </section>
+
+      <section class="tesla-glass rounded-3xl p-4 space-y-3 border border-teslaCyan/25">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-xs sm:text-sm font-bold text-teslaCyan font-kannada">ಹಂತ 5 — ಬೆಳೆವಾರು dM/dt ತೇವಾಂಶ ಮತ್ತು ನೀರಾವರಿ ಸಮಯ</h3>
+            <p class="text-[10px] font-mono text-gray-400">t_irr = (M_zone - M_critical) / |dM/dt|</p>
+          </div>
+          <span class="text-[10px] font-mono text-amber-300">STEP 5</span>
+        </div>
+
+        <div id="priorityIrrigBanner" class="bg-amber-500/15 border border-amber-400/40 rounded-2xl p-3 text-xs font-kannada text-amber-100">
+          ಗಣನೆ ಮಾಡಲಾಗುತ್ತಿದೆ...
+        </div>
+
+        <div id="zonePredictionCards" class="space-y-2.5"></div>
+
+        <button onclick="askGeminiFieldSchedule()" class="w-full py-3 rounded-2xl bg-white/10 hover:bg-white/15 border border-teslaCyan/50 text-teslaCyan font-bold text-xs flex items-center justify-center gap-2 transition">
+          <span>✦</span> <span class="font-kannada">Gemini 3.5 AI ನಿಂದ ಸಂಪೂರ್ಣ ವಲಯವಾರು ನೀರಾವರಿ ಸಲಹೆ ಪಡೆಯಿರಿ</span>
+        </button>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ================= VIEW 3: SOIL PHYSICS, WEATHER & LIVE APMC MANDI ================= -->
+  <div id="tabSoil" class="tab-view">
+    <main class="max-w-xl mx-auto w-full px-4 pt-2 pb-32 space-y-4">
+      
+      <section class="tesla-glass rounded-3xl p-4 space-y-3">
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-bold text-white flex items-center gap-2"><span>🌦️</span> Village / Town Live Weather</h2>
+          <span class="text-[10px] font-mono text-teslaCyan">OPEN-METEO LIVE</span>
+        </div>
+        <div class="flex gap-2">
+          <input id="weatherTownInput" type="text" value="Bailhongal" placeholder="Enter town or village name..." class="flex-1 bg-black/40 border border-white/15 rounded-2xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-teslaCyan">
+          <button onclick="askInstantWeather(document.getElementById('weatherTownInput').value)" class="px-4 py-2 rounded-2xl bg-teslaCyan text-black font-bold text-xs">Check</button>
+        </div>
+        <div id="weatherResultCard" class="bg-black/35 rounded-2xl p-3 text-xs text-gray-200 font-kannada">
+          ಬೈಲಹೊಂಗಲ ಅಥವಾ ನಿಮ್ಮ ಹಳ್ಳಿಯ ಹೆಸರನ್ನು ಟೈಪ್ ಮಾಡಿ ತಕ್ಷಣದ ಹವಾಮಾನ ಮತ್ತು ಸೋಲಾರ್ ವಾತಾವರಣ ಪರಿಶೀಲಿಸಿ.
+        </div>
+      </section>
+
+      <section class="tesla-glass rounded-3xl p-4 space-y-3">
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-bold text-neonMint">🌱 Soil &amp; Crop Calibration</h2>
+          <span class="text-[10px] font-mono text-gray-400">YL-69 ADC</span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2.5 text-xs">
+          <div>
+            <label class="block text-[11px] text-gray-400 mb-1">Soil Type (K_soil)</label>
+            <select id="selSoilType" onchange="syncSoilTypeFromTabSoil(this.value)" class="w-full bg-black/50 border border-white/15 rounded-xl p-2.5 text-white">
+              <option value="0.85" selected>Black Cotton (0.85)</option>
+              <option value="1.25">Red Sandy Loam (1.25)</option>
+              <option value="1.00">Alluvial Mixed (1.00)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] text-gray-400 mb-1">Crop Threshold</label>
+            <select id="selCropType" onchange="recalculateSoilPhysics()" class="w-full bg-black/50 border border-white/15 rounded-xl p-2.5 text-white">
+              <option value="35" selected>Onion / Veg (35%)</option>
+              <option value="30">Cotton / Maize (30%)</option>
+              <option value="40">Sugarcane (40%)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] text-gray-400 mb-1">Temp (°C)</label>
+            <input id="inpTemp" type="number" value="31.5" step="0.5" onchange="recalculateSoilPhysics()" class="w-full bg-black/50 border border-white/15 rounded-xl p-2.5 text-white font-mono">
+          </div>
+          <div>
+            <label class="block text-[11px] text-gray-400 mb-1">Evap Rate</label>
+            <input id="inpEvap" type="number" value="0.65" step="0.05" onchange="recalculateSoilPhysics()" class="w-full bg-black/50 border border-white/15 rounded-xl p-2.5 text-white font-mono">
+          </div>
+        </div>
+
+        <div class="bg-black/45 border border-white/10 rounded-2xl p-3 font-mono text-xs space-y-1">
+          <div class="flex justify-between text-gray-400"><span>Raw ADC:</span> <b id="dispAdcRaw" class="text-white">2450</b></div>
+          <div class="flex justify-between text-gray-400"><span>Raw Moisture:</span> <b id="dispMraw" class="text-neonMint">51.9%</b></div>
+          <div class="flex justify-between text-teslaCyan text-sm pt-1 border-t border-white/10"><span>Root-Zone M_field:</span> <b id="dispMfield">43.2%</b></div>
+          <div id="soilAdvisoryBanner" class="pt-1 font-kannada text-xs font-bold text-neonMint">✅ ತೇವಾಂಶ ಉತ್ತಮ ಮಟ್ಟದಲ್ಲಿದೆ.</div>
+        </div>
+      </section>
+
+      <section class="tesla-glass rounded-3xl p-4 space-y-3">
+        <div class="flex items-center justify-between gap-2">
+          <div>
+            <h2 class="text-sm font-bold text-amber-300">🌾 Live Internet APMC Market Rates</h2>
+            <p id="mandiSourceMeta" class="text-[10px] font-mono text-gray-400">Source: Agmarknet (data.gov.in) + Google Search Grounding</p>
+          </div>
+          <button id="btnRefreshMandi" onclick="fetchLiveMandiPrices(true)" class="px-3 py-1.5 rounded-xl bg-amber-400/20 border border-amber-400/50 text-amber-300 text-[11px] font-mono font-bold active:scale-95 transition">
+            🔄 Fetch Live
+          </button>
+        </div>
+
+        <div class="flex gap-1.5 overflow-x-auto pb-1">
+          <button onclick="setMandiFilter('ALL', this)" class="mandi-filter-btn px-2.5 py-1 rounded-xl bg-amber-400 text-black text-[11px] font-mono font-bold">ALL</button>
+          <button onclick="setMandiFilter('Bailhongal', this)" class="mandi-filter-btn px-2.5 py-1 rounded-xl bg-white/5 border border-white/10 text-gray-300 text-[11px] font-mono">Bailhongal</button>
+          <button onclick="setMandiFilter('Belagavi', this)" class="mandi-filter-btn px-2.5 py-1 rounded-xl bg-white/5 border border-white/10 text-gray-300 text-[11px] font-mono">Belagavi</button>
+          <button onclick="setMandiFilter('Hubballi', this)" class="mandi-filter-btn px-2.5 py-1 rounded-xl bg-white/5 border border-white/10 text-gray-300 text-[11px] font-mono">Hubballi</button>
+        </div>
+
+        <div id="mandiRatesList" class="divide-y divide-white/10 text-xs font-mono"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- ================= VIEW 4: GEMINI 3.5 FLASH VOICE & VISION STUDIO ================= -->
+  <div id="tabAi" class="tab-view">
+    <div class="max-w-xl mx-auto w-full flex flex-col h-full">
+      <div class="px-4 py-2 flex items-center justify-between flex-shrink-0 gap-2">
+        <div class="min-w-0">
+          <span id="studioHeaderModelLabel" class="text-xs font-mono text-teslaCyan font-bold block truncate">✦ Gemini 3.5 Flash • Full Farm Context</span>
+          <span id="studioKeyStatus" class="text-[10px] font-mono text-amber-300">API Key: Not Set (Edge Mode)</span>
+        </div>
+        <div class="flex bg-black/40 rounded-full p-0.5 border border-white/10 flex-shrink-0">
+          <button id="langBtnKn" onclick="setAiLanguage('kn')" class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-teslaEmerald text-black">ಕನ್ನಡ</button>
+          <button id="langBtnEn" onclick="setAiLanguage('en')" class="px-2.5 py-0.5 rounded-full text-[11px] text-gray-400">English</button>
+        </div>
+      </div>
+
+      <div id="aiChatStream" class="flex-1 overflow-y-auto px-4 py-2 space-y-3 font-kannada text-xs sm:text-sm pb-36">
+        <div class="tesla-glass rounded-3xl rounded-tl-md p-4 space-y-2.5 border border-emerald-500/25">
+          <p class="font-bold text-neonMint">ನಮಸ್ಕಾರ! ನಾನು ನಿಮ್ಮ AgriGuard Gemini 3.5 AI ಸಹಾಯಕ.</p>
+          <p class="text-gray-200 leading-relaxed bubble-text-content">
+            ನಿಮ್ಮ ಹೊಲದ ನಕ್ಷೆಯಲ್ಲಿ ಗುರುತಿಸಿದ ಎಲ್ಲಾ ಬೆಳೆಗಳ ವಿವರ, ಮಣ್ಣಿನ ತೇವಾಂಶ, ನೀರಾವರಿ ಸಮಯ, ಮಾರುಕಟ್ಟೆ ಬೆಲೆ ಮತ್ತು ಹವಾಮಾನದ ಸಂಪೂರ್ಣ ಮಾಹಿತಿ ನನ್ನಲ್ಲಿದೆ. ಯಾವುದೇ ಪ್ರಶ್ನೆಯನ್ನು ಕೇಳಿ ಅಥವಾ ಎಲೆಯ ಫೋಟೋ ಲಗತ್ತಿಸಿ.
+          </p>
+          <button onclick="VoicePlayer.playFromElement(this)" class="px-3.5 py-1.5 rounded-full bg-teslaCyan/20 border border-teslaCyan/40 text-teslaCyan font-bold text-xs">
+            🔊 ಕೇಳಿ (Listen)
+          </button>
+        </div>
+      </div>
+
+      <div id="aiPendingTray" class="hidden items-center gap-3 mx-4 mb-2 px-3 py-2 tesla-glass rounded-2xl">
+        <img id="pendingImageThumb" src="" class="w-10 h-10 rounded-xl object-cover hidden">
+        <span id="studioPendingFileIcon" class="text-xl hidden">📄</span>
+        <p id="studioPendingFileName" class="text-xs font-mono text-teslaCyan truncate flex-1">leaf.jpg</p>
+        <button onclick="clearPendingImage()" class="text-rose-400 font-bold px-2">✕</button>
+      </div>
+
+      <div class="px-4 pb-24 pt-1 flex items-center gap-2 flex-shrink-0">
+        <input type="file" id="cameraFileInput" accept="image/*,application/pdf,text/plain" class="hidden" onchange="handleImageFileSelected(event)">
+        <div class="flex-1 tesla-glass rounded-full px-3 py-1.5 flex items-center gap-2">
+          <button onclick="document.getElementById('cameraFileInput').click()" class="text-gray-300 hover:text-teslaCyan p-1" title="Attach Crop Photo">📷</button>
+          <input id="aiPromptInput" type="text" placeholder="ಇಲ್ಲಿ ಟೈಪ್ ಮಾಡಿ ಅಥವಾ ಮೈಕ್ ಒತ್ತಿ..." class="flex-1 bg-transparent text-xs sm:text-sm text-white focus:outline-none font-kannada" onkeydown="if(event.key==='Enter') dispatchUserGeminiPrompt()">
+          <button onclick="dispatchUserGeminiPrompt()" class="w-8 h-8 rounded-full bg-teslaEmerald text-black font-bold flex items-center justify-center">➤</button>
+        </div>
+        <button id="aiMicBtn" onclick="toggleVoiceDictation()" class="voice-orb w-12 h-12 rounded-full flex items-center justify-center text-white flex-shrink-0 shadow-lg" title="Speak">
+          🎤
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TESLA FLOATING DOCK NAVIGATION ================= -->
+  <nav class="fixed bottom-3 left-1/2 -translate-x-1/2 w-[95%] max-w-lg tesla-glass rounded-full px-1.5 py-1.5 flex items-center justify-around z-40 border border-white/15 shadow-2xl gap-0.5">
+    <button id="tabBtnDashboard" onclick="switchCompartment('dashboard')" class="flex-1 py-2 px-1 rounded-full bg-emerald-500/20 text-neonMint font-semibold text-[10px] sm:text-xs flex items-center justify-center gap-1 transition whitespace-nowrap">
+      <span>🛡️</span><span>Farm</span>
+    </button>
+
+    <button id="tabBtnFieldMap" onclick="switchCompartment('fieldmap')" class="flex-1 py-2 px-1 rounded-full text-gray-400 hover:text-white font-semibold text-[10px] sm:text-xs flex items-center justify-center gap-1 transition whitespace-nowrap font-kannada">
+      <span>🗺️</span><span>ಹೊಲದ ನಕ್ಷೆ</span>
+    </button>
+
+    <button id="tabBtnSoil" onclick="switchCompartment('soil')" class="flex-1 py-2 px-1 rounded-full text-gray-400 hover:text-white font-semibold text-[10px] sm:text-xs flex items-center justify-center gap-1 transition whitespace-nowrap">
+      <span>🌦️</span><span>Soil &amp; Mandi</span>
+    </button>
+
+    <button id="tabBtnAi" onclick="switchCompartment('ai')" class="flex-1 py-2 px-1 rounded-full text-gray-400 hover:text-white font-semibold text-[10px] sm:text-xs flex items-center justify-center gap-1 transition whitespace-nowrap">
+      <span>✦</span><span>Agro-AI</span>
+    </button>
+  </nav>
+
+  <!-- ================= FLOATING VOICE PLAYBACK PILL ================= -->
+  <div id="floatingVoiceBar" class="fixed top-16 left-1/2 -translate-x-1/2 -translate-y-32 tesla-glass border border-teslaCyan/50 rounded-full px-4 py-1.5 flex items-center gap-3 z-50 transition-transform duration-300 shadow-xl">
+    <span id="floatingVoiceLabel" class="text-xs font-mono text-teslaCyan font-bold">🔊 ಕನ್ನಡದಲ್ಲಿ ಓದುತ್ತಿದೆ...</span>
+    <button onclick="VoicePlayer.stop()" class="px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 text-xs font-bold">⏹ Stop</button>
+  </div>
+
+  <!-- ================= SOLAR + WEATHER DIAGNOSTIC MODAL ================= -->
+  <div id="solarModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+    <div class="tesla-glass rounded-3xl max-w-md w-full p-5 space-y-4 border border-teslaCyan/40">
+      <div class="flex items-center justify-between border-b border-white/10 pb-2">
+        <h3 class="text-sm font-bold text-teslaCyan font-mono">☀️ SOLAR PANEL + WEATHER DIAGNOSTIC</h3>
+        <button onclick="closeSolarDiagnosticModal()" class="text-gray-400 hover:text-white">✕</button>
+      </div>
+      <div class="grid grid-cols-3 gap-2 text-center font-mono text-xs bg-black/40 rounded-2xl p-3 border border-white/10">
+        <div>
+          <span class="text-[9px] text-gray-400 block">SOLAR PV</span>
+          <span id="modalSolarV" class="text-base font-bold text-teslaCyan">18.2 V</span>
+        </div>
+        <div>
+          <span class="text-[9px] text-gray-400 block">DUST INDEX</span>
+          <span id="modalSolarDust" class="text-base font-bold text-amber-300">24 µg/m³</span>
+        </div>
+        <div>
+          <span class="text-[9px] text-gray-400 block">SKY / CLOUD</span>
+          <span id="modalSolarCloud" class="text-base font-bold text-neonMint">--%</span>
+        </div>
+      </div>
+      <div id="solarDiagnosisText" class="text-xs leading-relaxed font-kannada text-gray-100 bg-black/45 border border-white/10 rounded-2xl p-3.5 min-h-[85px]">
+        ಹವಾಮಾನ ಮತ್ತು ಸೋಲಾರ್ ಸ್ಥಿತಿ ಪರಿಶೀಲಿಸಲಾಗುತ್ತಿದೆ...
+      </div>
+      <div class="flex items-center justify-between gap-2">
+        <button onclick="VoicePlayer.play(document.getElementById('solarDiagnosisText').innerText, state.aiLanguage === 'kn' ? 'kn-IN' : 'en-IN')" class="px-4 py-2 rounded-2xl bg-teslaCyan/20 border border-teslaCyan text-teslaCyan font-bold text-xs">
+          🔊 ವರದಿ ಕೇಳಿ (Listen)
+        </button>
+        <button onclick="closeSolarDiagnosticModal()" class="px-4 py-2 rounded-2xl bg-white/10 text-gray-200 text-xs font-bold">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= INTRUSION STROBE MODAL ================= -->
+  <div id="strobeModal" class="fixed inset-0 z-50 hidden flex-col items-center justify-center p-4">
+    <div class="bg-black/95 border-2 border-rose-500 rounded-3xl p-6 max-w-sm w-full text-center shadow-2xl">
+      <div class="text-5xl mb-2 animate-bounce">🚨</div>
+      <h3 id="strobeTitle" class="text-lg font-bold font-mono text-rose-400 uppercase">PERIMETER BREACH</h3>
+      <p id="strobeAlertMeta" class="text-xs text-gray-200 font-kannada my-3">ಅಕ್ರಮ ಪ್ರವೇಶ ಪತ್ತೆಯಾಗಿದೆ!</p>
+      <div class="grid grid-cols-2 gap-2 mt-4">
+        <button onclick="triggerBioCloud('SIREN')" class="py-2.5 bg-rose-600 text-white text-xs font-bold rounded-2xl">BURST SIREN</button>
+        <button onclick="dismissStrobeAlert()" class="py-2.5 bg-white/15 text-gray-200 text-xs font-bold rounded-2xl">DISMISS</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= SETTINGS MODAL ================= -->
+  <div id="configModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+    <div class="tesla-glass rounded-3xl max-w-sm w-full p-5 space-y-3.5">
+      <h3 class="text-sm font-bold text-neonMint">⚙️ System &amp; Gemini 3.5 Config</h3>
+      <div class="space-y-2.5 text-xs">
+        <div>
+          <label class="block text-gray-400 mb-1">Default Town / Village</label>
+          <input id="cfgCropLocation" type="text" class="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white" value="Bailhongal">
+        </div>
+        <div>
+          <label class="block text-gray-400 mb-1">Firebase RTDB URL</label>
+          <input id="cfgFirebaseUrl" type="text" class="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white font-mono" value="https://agriguard-live-default-rtdb.asia-southeast1.firebasedatabase.app/">
+        </div>
+        <div>
+          <label class="block text-gray-400 mb-1">Gemini AI Model</label>
+          <select id="cfgGeminiModel" class="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-neonMint font-mono">
+            <option value="gemini-3.5-flash" selected>gemini-3.5-flash (Default)</option>
+            <option value="gemini-3.5-flash-lite">gemini-3.5-flash-lite (Fast / Low Cost)</option>
+            <option value="gemini-3.8-flash">gemini-3.8-flash (Latest 3.x)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-gray-400 mb-1">Google Gemini API Key</label>
+          <input id="cfgGeminiKey" type="password" placeholder="AIzaSy..." class="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white font-mono">
+        </div>
+        <div>
+          <label class="block text-gray-400 mb-1">data.gov.in Agmarknet Key (Optional)</label>
+          <input id="cfgDataGovKey" type="password" placeholder="Optional — uses Google Search if blank" class="w-full bg-black/50 border border-white/15 rounded-xl px-3 py-2 text-white font-mono">
+        </div>
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button onclick="toggleConfigModal()" class="flex-1 py-2.5 rounded-2xl bg-white/10 text-gray-300 text-xs font-bold">Cancel</button>
+        <button onclick="saveAndReconnect()" class="flex-1 py-2.5 rounded-2xl bg-teslaEmerald text-black text-xs font-bold">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Pill -->
+  <div id="toastPill" class="fixed top-16 left-1/2 -translate-x-1/2 -translate-y-32 tesla-glass border border-neonMint/50 text-neonMint text-xs font-medium px-4 py-2 rounded-full transition-transform duration-300 z-50 pointer-events-none shadow-lg">
+    Ready
+  </div>
+
+  <script>
+    const CROP_CATALOG = {
+      onion:     { id: 'onion',     en: 'Onion',     kn: 'ಈರುಳ್ಳಿ',    kc: 1.05, threshold: 35, icon: '🧅', color: 'rgba(168, 85, 247, 0.32)', border: '#a855f7' },
+      cotton:    { id: 'cotton',    en: 'Cotton',    kn: 'ಹತ್ತಿ',      kc: 1.15, threshold: 30, icon: '🌿', color: 'rgba(16, 185, 129, 0.30)', border: '#10b981' },
+      maize:     { id: 'maize',     en: 'Maize',     kn: 'ಮೆಕ್ಕೆಜೋಳ',  kc: 1.20, threshold: 32, icon: '🌽', color: 'rgba(245, 158, 11, 0.32)', border: '#f59e0b' },
+      sugarcane: { id: 'sugarcane', en: 'Sugarcane', kn: 'ಕಬ್ಬು',      kc: 1.25, threshold: 40, icon: '🎋', color: 'rgba(56, 189, 248, 0.30)', border: '#38bdf8' },
+      soybean:   { id: 'soybean',   en: 'Soybean',   kn: 'ಸೋಯಾಬೀನ್',  kc: 0.95, threshold: 30, icon: '🫘', color: 'rgba(52, 211, 153, 0.28)', border: '#34d399' },
+      groundnut: { id: 'groundnut', en: 'Groundnut', kn: 'ಶೇಂಗಾ',      kc: 1.00, threshold: 30, icon: '🥜', color: 'rgba(251, 146, 60, 0.30)', border: '#fb923c' }
+    };
+
+    const ZONE_LABELS = ['Zone A', 'Zone B', 'Zone C', 'Zone D'];
+
+    const state = {
+      battery_pct: 92,
+      solar_volt: 18.2,
+      dust_level: 24,
+      rawADC: 2450,
+      M_raw: 51.9,
+      M_corr: 46.8,
+      M_field: 43.2,
+      temp_celsius: 31.5,
+      K_soil: 0.85,
+      cropThreshold: 35,
+      evapRate: 0.65,
+      is_armed: true,
+      pump_state: false,
+      threat: 'SECURE',
+      pumpTimerSec: 0,
+      pumpInterval: null,
+      selectedDuration: 15,
+      aiLanguage: 'kn',
+      studioAttachedBase64: null, studioAttachedMime: null, studioAttachedName: null,
+      speechRecognition: null,
+      isListening: false,
+
+      fieldMap: {
+        totalArea: 4.0,
+        areaUnit: 'Acres',
+        mode: 'multi',
+        cropCount: 3,
+        selectedZoneIdx: 0,
+        zones: [
+          { cropId: 'onion',  pct: 40 },
+          { cropId: 'cotton', pct: 35 },
+          { cropId: 'maize',  pct: 25 }
+        ]
+      },
+      latestZonePredictions: [],
+
+      mandiFilter: 'ALL',
+      mandiRates: JSON.parse(localStorage.getItem('agri_mandi_cache_v1') || 'null') || [
+        { market: 'Bailhongal', crop: 'Onion (ಈರುಳ್ಳಿ)',       min: 2200, modal: 2850, max: 3250, date: 'Cached' },
+        { market: 'Bailhongal', crop: 'Cotton (ಹತ್ತಿ)',         min: 6900, modal: 7420, max: 7750, date: 'Cached' },
+        { market: 'Bailhongal', crop: 'Soybean (ಸೋಯಾಬೀನ್)',   min: 4300, modal: 4620, max: 4850, date: 'Cached' },
+        { market: 'Belagavi',   crop: 'Jaggery / Cane (ಬೆಲ್ಲ)', min: 3450, modal: 3780, max: 4100, date: 'Cached' },
+        { market: 'Belagavi',   crop: 'Onion (ಈರುಳ್ಳಿ)',       min: 2100, modal: 2740, max: 3150, date: 'Cached' },
+        { market: 'Hubballi',   crop: 'Maize (ಮೆಕ್ಕೆಜೋಳ)',      min: 2050, modal: 2240, max: 2380, date: 'Cached' },
+        { market: 'Hubballi',   crop: 'Tur Dal (ತೊಗರಿ)',        min: 9100, modal: 9780, max: 10200, date: 'Cached' }
+      ]
+    };
+
+    const config = {
+      firebaseUrl: localStorage.getItem('agri_fb_url') || 'https://agriguard-live-default-rtdb.asia-southeast1.firebasedatabase.app/',
+      cropLocation: localStorage.getItem('agri_crop_loc') || 'Bailhongal',
+      geminiModel: localStorage.getItem('agri_gemini_model') || 'gemini-3.5-flash',
+      geminiKey: localStorage.getItem('agri_gemini_key') || '',
+      dataGovKey: localStorage.getItem('agri_datagov_key') || ''
+    };
+    if (config.geminiModel === 'gemini-2.5-flash') {
+      config.geminiModel = 'gemini-3.5-flash';
+      localStorage.setItem('agri_gemini_model', 'gemini-3.5-flash');
+    }
+
+    function switchCompartment(tabName) {
+      ['tabDashboard', 'tabFieldMap', 'tabSoil', 'tabAi'].forEach(id => document.getElementById(id).classList.remove('active'));
+      const inactive = "flex-1 py-2 px-1 rounded-full text-gray-400 hover:text-white font-semibold text-[10px] sm:text-xs flex items-center justify-center gap-1 transition whitespace-nowrap";
+      const active = "flex-1 py-2 px-1 rounded-full bg-emerald-500/20 text-neonMint font-semibold text-[10px] sm:text-xs flex items-center justify-center gap-1 transition whitespace-nowrap";
+
+      ['tabBtnDashboard', 'tabBtnFieldMap', 'tabBtnSoil', 'tabBtnAi'].forEach(id => {
+        const el = document.getElementById(id);
+        el.className = id === 'tabBtnFieldMap' ? inactive + ' font-kannada' : inactive;
+      });
+
+      if (tabName === 'fieldmap') {
+        document.getElementById('tabFieldMap').classList.add('active');
+        document.getElementById('tabBtnFieldMap').className = active + ' font-kannada';
+      } else if (tabName === 'soil') {
+        document.getElementById('tabSoil').classList.add('active');
+        document.getElementById('tabBtnSoil').className = active;
+      } else if (tabName === 'ai') {
+        document.getElementById('tabAi').classList.add('active');
+        document.getElementById('tabBtnAi').className = active;
+      } else {
+        document.getElementById('tabDashboard').classList.add('active');
+        document.getElementById('tabBtnDashboard').className = active;
+      }
+    }
+
+    // ================= SOIL PHYSICS & SYNC =================
+    function syncSoilTypeFromFieldMap(val) {
+      document.getElementById('selSoilType').value = val;
+      recalculateSoilPhysics();
+      sendFirebaseCommand({ k_soil: parseFloat(val) });
+    }
+
+    function syncSoilTypeFromTabSoil(val) {
+      document.getElementById('fmSoilType').value = val;
+      recalculateSoilPhysics();
+      sendFirebaseCommand({ k_soil: parseFloat(val) });
+    }
+
+    function recalculateSoilPhysics() {
+      state.K_soil = parseFloat(document.getElementById('selSoilType').value) || 0.85;
+      state.cropThreshold = parseFloat(document.getElementById('selCropType').value) || 35;
+      state.temp_celsius = parseFloat(document.getElementById('inpTemp').value) || 31.5;
+      state.evapRate = parseFloat(document.getElementById('inpEvap').value) || 0.65;
+
+      const raw = Math.min(100, Math.max(0, ((3800 - state.rawADC) / 2600) * 100.0));
+      const corr = Math.min(100, Math.max(0, raw * (1.0 - 0.015 * (state.temp_celsius - 25.0))));
+      const deltaT = Math.max(0, state.temp_celsius - 25.0);
+      const field = Math.min(100, Math.max(0, corr - (deltaT * state.K_soil * state.evapRate)));
+
+      state.M_raw = raw; state.M_corr = corr; state.M_field = field;
+
+      document.getElementById('dispAdcRaw').textContent = state.rawADC;
+      document.getElementById('dispMraw').textContent = raw.toFixed(1) + '%';
+      document.getElementById('dispMfield').textContent = field.toFixed(1) + '%';
+      document.getElementById('gaugeSoil').textContent = field.toFixed(1);
+      document.getElementById('gaugeTemp').textContent = state.temp_celsius.toFixed(1);
+
+      const banner = document.getElementById('soilAdvisoryBanner');
+      if (field < state.cropThreshold) {
+        banner.textContent = `🚨 ನೀರು ಹಾಯಿಸುವ ಸಮಯ (${field.toFixed(1)}% < ${state.cropThreshold}%)`;
+        banner.className = "pt-1 font-kannada text-xs font-bold text-rose-400";
+      } else {
+        banner.textContent = `✅ ತೇವಾಂಶ ಉತ್ತಮ ಮಟ್ಟದಲ್ಲಿದೆ (${field.toFixed(1)}%)`;
+        banner.className = "pt-1 font-kannada text-xs font-bold text-neonMint";
+      }
+
+      computeAndRenderFieldPredictions();
+    }
+
+    // ================= FIELD & CROP MAP ENGINE =================
+    function loadFieldMapFromStorage() {
+      const saved = localStorage.getItem('agri_field_map_v1');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (parsed && Array.isArray(parsed.zones) && parsed.zones.length > 0) state.fieldMap = parsed;
+        } catch (e) {}
+      }
+      document.getElementById('fmTotalArea').value = state.fieldMap.totalArea;
+      document.getElementById('fmAreaUnit').value = state.fieldMap.areaUnit;
+      updateCropModeButtons();
+      renderCropRows();
+      renderFieldMapCanvas();
+      computeAndRenderFieldPredictions();
+    }
+
+    function onFarmAreaOrUnitChange() {
+      const val = parseFloat(document.getElementById('fmTotalArea').value);
+      state.fieldMap.totalArea = (!isNaN(val) && val > 0) ? val : 1;
+      state.fieldMap.areaUnit = document.getElementById('fmAreaUnit').value;
+      renderCropRows(); renderFieldMapCanvas(); computeAndRenderFieldPredictions();
+    }
+
+    function setCropMode(mode) {
+      state.fieldMap.mode = mode;
+      if (mode === 'single') {
+        state.fieldMap.zones = [{ cropId: state.fieldMap.zones[0]?.cropId || 'onion', pct: 100 }];
+        state.fieldMap.selectedZoneIdx = 0;
+      } else {
+        setMultiCropCount(state.fieldMap.cropCount || 3, false);
+      }
+      updateCropModeButtons(); renderCropRows(); renderFieldMapCanvas(); computeAndRenderFieldPredictions();
+    }
+
+    function updateCropModeButtons() {
+      const isSingle = state.fieldMap.mode === 'single';
+      document.getElementById('btnModeSingle').className = isSingle
+        ? 'py-2.5 px-2 rounded-2xl border border-neonMint bg-emerald-500/20 text-neonMint text-[11px] font-semibold font-kannada text-center transition'
+        : 'py-2.5 px-2 rounded-2xl border border-white/15 bg-white/5 text-gray-300 text-[11px] font-semibold font-kannada text-center transition';
+      document.getElementById('btnModeMulti').className = !isSingle
+        ? 'py-2.5 px-2 rounded-2xl border border-neonMint bg-emerald-500/20 text-neonMint text-[11px] font-semibold font-kannada text-center transition'
+        : 'py-2.5 px-2 rounded-2xl border border-white/15 bg-white/5 text-gray-300 text-[11px] font-semibold font-kannada text-center transition';
+
+      document.getElementById('multiCropCountBox').classList.toggle('hidden', isSingle);
+      document.querySelectorAll('.crop-count-btn').forEach(btn => {
+        const count = parseInt(btn.textContent, 10);
+        btn.className = count === state.fieldMap.cropCount
+          ? 'crop-count-btn py-2 rounded-xl border border-neonMint bg-emerald-500/20 text-xs font-mono font-bold text-neonMint'
+          : 'crop-count-btn py-2 rounded-xl border border-white/15 bg-black/40 text-xs font-mono font-bold text-gray-300';
+      });
+    }
+
+    function setMultiCropCount(n, doRender = true) {
+      state.fieldMap.mode = 'multi';
+      state.fieldMap.cropCount = n;
+      const defaults = ['onion', 'cotton', 'maize', 'sugarcane'];
+      const presets = { 2: [50, 50], 3: [40, 35, 25], 4: [30, 25, 25, 20] };
+      const pcts = presets[n] || [50, 50];
+
+      const newZones = [];
+      for (let i = 0; i < n; i++) newZones.push({ cropId: state.fieldMap.zones[i]?.cropId || defaults[i], pct: pcts[i] });
+      state.fieldMap.zones = newZones;
+      if (state.fieldMap.selectedZoneIdx >= n) state.fieldMap.selectedZoneIdx = 0;
+
+      if (doRender) {
+        updateCropModeButtons(); renderCropRows(); renderFieldMapCanvas(); computeAndRenderFieldPredictions();
+      }
+    }
+
+    function renderCropRows() {
+      const container = document.getElementById('cropRowsContainer');
+      const totalArea = state.fieldMap.totalArea;
+      const unit = state.fieldMap.areaUnit;
+      const isSingle = state.fieldMap.mode === 'single';
+
+      container.innerHTML = state.fieldMap.zones.map((z, idx) => {
+        const crop = CROP_CATALOG[z.cropId] || CROP_CATALOG.onion;
+        const zoneArea = ((totalArea * z.pct) / 100).toFixed(2);
+        const optionsHtml = Object.values(CROP_CATALOG).map(c =>
+          `<option value="${c.id}" ${c.id === z.cropId ? 'selected' : ''}>${c.icon} ${c.kn} / ${c.en} (Kc=${c.kc}, Min=${c.threshold}%)</option>`
+        ).join('');
+
+        return `
+          <div class="bg-black/45 border border-white/10 rounded-2xl p-2.5 space-y-2">
+            <div class="flex items-center justify-between text-[11px] font-mono">
+              <span class="font-bold" style="color:${crop.border}">${ZONE_LABELS[idx]}</span>
+              <span class="text-gray-400">Kc=${crop.kc.toFixed(2)} • Crit=${crop.threshold}%</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
+              <select onchange="updateZoneCrop(${idx}, this.value)" class="sm:col-span-7 bg-black/60 border border-white/15 rounded-xl px-2.5 py-2 text-xs text-white font-kannada">${optionsHtml}</select>
+              <div class="sm:col-span-5 flex items-center gap-1.5">
+                <input type="number" min="0" max="${totalArea}" step="0.1" value="${zoneArea}" ${isSingle ? 'disabled' : ''} onchange="updateZoneAreaValue(${idx}, this.value)" class="w-full bg-black/60 border border-white/15 rounded-xl px-2 py-2 text-xs font-mono text-white text-right">
+                <span class="text-[10px] font-mono text-gray-400 whitespace-nowrap">${unit}</span>
+                <span class="text-[11px] font-mono font-bold text-neonMint whitespace-nowrap">(${z.pct}%)</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+      validateAreaSum();
+    }
+
+    function updateZoneCrop(idx, cropId) {
+      state.fieldMap.zones[idx].cropId = cropId;
+      renderCropRows(); renderFieldMapCanvas(); computeAndRenderFieldPredictions();
+    }
+
+    function updateZoneAreaValue(idx, areaVal) {
+      const val = parseFloat(areaVal);
+      if (isNaN(val) || val < 0) return;
+      state.fieldMap.zones[idx].pct = Math.max(0, Math.min(100, Math.round((val / state.fieldMap.totalArea) * 100)));
+      renderCropRows(); renderFieldMapCanvas(); computeAndRenderFieldPredictions();
+    }
+
+    function validateAreaSum() {
+      const sumPct = state.fieldMap.zones.reduce((acc, z) => acc + z.pct, 0);
+      const total = state.fieldMap.totalArea;
+      const alloc = ((total * sumPct) / 100).toFixed(2);
+      const bar = document.getElementById('areaValidationBar');
+      const msg = document.getElementById('areaValidationMsg');
+
+      if (Math.abs(sumPct - 100) <= 1) {
+        bar.className = 'rounded-2xl p-2.5 bg-emerald-500/15 border border-emerald-500/40 flex items-center justify-between gap-2 text-[11px] font-mono';
+        msg.className = 'text-neonMint font-bold';
+        msg.textContent = `✓ Total: ${alloc} / ${total} ${state.fieldMap.areaUnit} (${sumPct}%)`;
+      } else {
+        bar.className = 'rounded-2xl p-2.5 bg-rose-500/15 border border-rose-500/50 flex items-center justify-between gap-2 text-[11px] font-mono';
+        msg.className = 'text-rose-300 font-bold';
+        msg.textContent = `⚠ Sum is ${sumPct}% (${alloc}/${total} ${state.fieldMap.areaUnit}) — Must equal 100%`;
+      }
+    }
+
+    function autoBalanceZones() {
+      const zones = state.fieldMap.zones;
+      const sum = zones.reduce((a, z) => a + z.pct, 0);
+      if (sum <= 0) {
+        const eq = Math.floor(100 / zones.length);
+        zones.forEach((z, i) => z.pct = i === zones.length - 1 ? 100 - eq * (zones.length - 1) : eq);
+      } else {
+        let running = 0;
+        for (let i = 0; i < zones.length; i++) {
+          if (i === zones.length - 1) zones[i].pct = Math.max(0, 100 - running);
+          else { zones[i].pct = Math.round((zones[i].pct / sum) * 100); running += zones[i].pct; }
+        }
+      }
+      renderCropRows(); renderFieldMapCanvas(); computeAndRenderFieldPredictions();
+      showToast('Zones Balanced to 100%');
+    }
+
+    function renderFieldMapCanvas() {
+      const canvas = document.getElementById('fieldMapCanvas');
+      const totalArea = state.fieldMap.totalArea;
+      const unit = state.fieldMap.areaUnit;
+
+      canvas.innerHTML = state.fieldMap.zones.map((z, idx) => {
+        const crop = CROP_CATALOG[z.cropId] || CROP_CATALOG.onion;
+        const isSel = state.fieldMap.selectedZoneIdx === idx;
+        const areaText = ((totalArea * z.pct) / 100).toFixed(2);
+        const flexBasis = Math.max(20, z.pct);
+
+        return `
+          <button onclick="selectMapZone(${idx})" style="flex: ${flexBasis} 1 ${flexBasis > 45 ? '46%' : '30%'}; background:${crop.color}; border-color:${crop.border};"
+            class="zone-tile ${isSel ? 'selected' : ''} min-h-[88px] rounded-xl border p-2.5 flex flex-col justify-between text-left relative overflow-hidden">
+            <div class="flex items-center justify-between w-full">
+              <span class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-black/50 text-white">${ZONE_LABELS[idx]}</span>
+              <span class="text-lg">${crop.icon}</span>
+            </div>
+            <div class="mt-2">
+              <div class="text-xs font-bold text-white font-kannada truncate">${crop.kn} (${crop.en})</div>
+              <div class="text-[10px] font-mono text-gray-200">${areaText} ${unit} • <b>${z.pct}%</b></div>
+            </div>
+          </button>
+        `;
+      }).join('');
+
+      const sel = state.fieldMap.zones[state.fieldMap.selectedZoneIdx] || state.fieldMap.zones[0];
+      const selCrop = CROP_CATALOG[sel.cropId] || CROP_CATALOG.onion;
+      document.getElementById('selectedZoneTitle').textContent =
+        `${ZONE_LABELS[state.fieldMap.selectedZoneIdx]} • ${selCrop.kn} / ${selCrop.en} (${sel.pct}%)`;
+    }
+
+    function selectMapZone(idx) {
+      state.fieldMap.selectedZoneIdx = idx;
+      renderFieldMapCanvas();
+    }
+
+    function adjustSelectedZonePct(delta) {
+      if (state.fieldMap.mode === 'single') { showToast('Switch to Multiple Crops to adjust zones'); return; }
+      const idx = state.fieldMap.selectedZoneIdx;
+      const zones = state.fieldMap.zones;
+      const newPct = Math.max(5, Math.min(95, zones[idx].pct + delta));
+      const actualDelta = newPct - zones[idx].pct;
+      if (actualDelta === 0) return;
+      const otherIdx = (idx + 1) % zones.length;
+      if (zones[otherIdx].pct - actualDelta >= 5) {
+        zones[idx].pct = newPct;
+        zones[otherIdx].pct -= actualDelta;
+      } else {
+        zones[idx].pct = newPct;
+      }
+      renderCropRows(); renderFieldMapCanvas(); computeAndRenderFieldPredictions();
+    }
+
+    function saveAndApplyFieldMap() {
+      const sumPct = state.fieldMap.zones.reduce((a, z) => a + z.pct, 0);
+      if (Math.abs(sumPct - 100) > 1) autoBalanceZones();
+      localStorage.setItem('agri_field_map_v1', JSON.stringify(state.fieldMap));
+      computeAndRenderFieldPredictions();
+      sendFirebaseCommand({ field_map_updated: Date.now(), total_area: state.fieldMap.totalArea, zones_count: state.fieldMap.zones.length });
+      showToast('ಹೊಲದ ನಕ್ಷೆ ಉಳಿಸಲಾಗಿದೆ! (Field Map Saved)');
+    }
+
+    // ================= PER-CROP DIFFERENTIAL MOISTURE DECAY (dM/dt) =================
+    function computeAndRenderFieldPredictions() {
+      const corr = state.M_corr;
+      const T = state.temp_celsius;
+      const deltaT = Math.max(0, T - 25.0);
+      const K_soil = state.K_soil;
+      const evap = state.evapRate;
+
+      const predictions = state.fieldMap.zones.map((z, idx) => {
+        const crop = CROP_CATALOG[z.cropId] || CROP_CATALOG.onion;
+        const areaVal = ((state.fieldMap.totalArea * z.pct) / 100).toFixed(2);
+        const mZone = Math.min(100, Math.max(0, corr - (deltaT * K_soil * evap * crop.kc)));
+        const dMdt = Math.max(0.25, (0.5 + 0.18 * deltaT) * K_soil * evap * crop.kc);
+        const diff = mZone - crop.threshold;
+        const hoursLeft = diff <= 0 ? 0 : diff / dMdt;
+
+        return {
+          zoneLabel: ZONE_LABELS[idx], crop, pct: z.pct,
+          areaText: `${areaVal} ${state.fieldMap.areaUnit}`,
+          mZone, dMdt, hoursLeft, urgent: diff <= 0
+        };
+      });
+
+      state.latestZonePredictions = predictions;
+      const sorted = [...predictions].sort((a, b) => a.hoursLeft - b.hoursLeft);
+      const nextZone = sorted[0];
+
+      const dashBadge = document.getElementById('dashNextIrrigBadge');
+      if (dashBadge && nextZone) {
+        dashBadge.textContent = nextZone.urgent ? 'NOW! 🚨' : `${nextZone.hoursLeft.toFixed(1)} hrs`;
+        dashBadge.className = nextZone.urgent ? 'text-xs font-mono font-bold text-rose-400 animate-pulse' : 'text-xs font-mono font-bold text-amber-300';
+      }
+
+      const priorityBanner = document.getElementById('priorityIrrigBanner');
+      if (nextZone) {
+        if (nextZone.urgent) {
+          priorityBanner.className = 'bg-rose-500/20 border border-rose-400 rounded-2xl p-3 text-xs font-kannada text-rose-200 font-semibold';
+          priorityBanner.textContent = `🚨 ತುರ್ತು ಆದ್ಯತೆ: ${nextZone.zoneLabel} (${nextZone.crop.kn}) ತೇವಾಂಶ ${nextZone.mZone.toFixed(1)}% ಕ್ಕೆ ಇಳಿದಿದೆ — ತಕ್ಷಣ ನೀರು ಹಾಯಿಸಿ!`;
+        } else {
+          priorityBanner.className = 'bg-amber-500/15 border border-amber-400/40 rounded-2xl p-3 text-xs font-kannada text-amber-100';
+          priorityBanner.textContent = `⏱️ ಮೊದಲ ಆದ್ಯತೆ: ${nextZone.zoneLabel} (${nextZone.crop.kn}) ಬೆಳೆಗೆ ಇನ್ನು ${nextZone.hoursLeft.toFixed(1)} ಗಂಟೆಗಳಲ್ಲಿ ನೀರು ಹಾಯಿಸಬೇಕು.`;
+        }
+      }
+
+      document.getElementById('zonePredictionCards').innerHTML = predictions.map(p => {
+        const statusColor = p.urgent ? 'text-rose-400 border-rose-500/50 bg-rose-500/10'
+                          : p.hoursLeft < 6 ? 'text-amber-300 border-amber-400/40 bg-amber-500/10'
+                          : 'text-neonMint border-emerald-500/30 bg-black/40';
+
+        const knSentence = p.urgent
+          ? `🚨 ${p.crop.kn} (${p.zoneLabel}): ಪ್ರಸ್ತುತ ತೇವಾಂಶ ${p.mZone.toFixed(1)}% — ತಕ್ಷಣ ನೀರು ಹಾಯಿಸಿ (Irrigate Now)`
+          : `${p.crop.kn} (${p.zoneLabel}): ಪ್ರಸ್ತುತ ತೇವಾಂಶ ${p.mZone.toFixed(1)}% — ಇನ್ನು <b>${p.hoursLeft.toFixed(1)} ಗಂಟೆಗಳ</b> ನಂತರ ನೀರು ಹಾಯಿಸಬೇಕು`;
+
+        const enSub = p.urgent
+          ? `Irrigate Now! (M_zone ${p.mZone.toFixed(1)}% ≤ Crit ${p.crop.threshold}%)`
+          : `Irrigate in ${p.hoursLeft.toFixed(1)} hours (Crit ${p.crop.threshold}%)`;
+
+        return `
+          <div class="rounded-2xl border p-3 space-y-2 ${statusColor}">
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-2">
+                <span class="text-xl">${p.crop.icon}</span>
+                <div>
+                  <div class="text-xs font-bold text-white font-kannada">${p.zoneLabel} • ${p.crop.kn} (${p.crop.en})</div>
+                  <div class="text-[10px] font-mono text-gray-300">${p.areaText} (${p.pct}%) • Kc=${p.crop.kc}</div>
+                </div>
+              </div>
+              <div class="text-right font-mono">
+                <div class="text-sm font-bold text-white">${p.mZone.toFixed(1)}%</div>
+                <div class="text-[10px] text-gray-300">|dM/dt|: ${p.dMdt.toFixed(2)}%/hr</div>
+              </div>
+            </div>
+            <div class="bg-black/40 rounded-xl px-2.5 py-2 text-xs font-kannada leading-snug text-gray-100">
+              ${knSentence}
+              <div class="text-[10px] font-mono text-gray-400 mt-0.5">${enSub}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function askGeminiFieldSchedule() {
+      switchCompartment('ai');
+      const prompt = state.aiLanguage === 'kn'
+        ? 'ನನ್ನ ಹೊಲದ ನಕ್ಷೆಯ ಎಲ್ಲಾ ಬೆಳೆಗಳ ತೇವಾಂಶ ಮತ್ತು ನೀರಾವರಿ ಸಮಯದ ಲೆಕ್ಕಾಚಾರದ ಆಧಾರದ ಮೇಲೆ ಯಾವ ವಲಯಕ್ಕೆ ಮೊದಲು ನೀರು ಹಾಯಿಸಬೇಕು ಎಂಬ ಸಂಪೂರ್ಣ ವೇಳಾಪಟ್ಟಿ ತಿಳಿಸಿ.'
+        : 'Based on my mapped field zones and dM/dt calculations, give me a prioritized irrigation schedule for each crop zone.';
+      document.getElementById('aiPromptInput').value = prompt;
+      dispatchUserGeminiPrompt();
+    }
+
+    // ================= LIVE INTERNET APMC MARKET PRICES =================
+    function setMandiFilter(market, btn) {
+      state.mandiFilter = market;
+      document.querySelectorAll('.mandi-filter-btn').forEach(b => {
+        b.className = 'mandi-filter-btn px-2.5 py-1 rounded-xl bg-white/5 border border-white/10 text-gray-300 text-[11px] font-mono';
+      });
+      btn.className = 'mandi-filter-btn px-2.5 py-1 rounded-xl bg-amber-400 text-black text-[11px] font-mono font-bold';
+      renderMandiList();
+    }
+
+    function renderMandiList() {
+      const list = document.getElementById('mandiRatesList');
+      const rows = state.mandiRates.filter(r =>
+        state.mandiFilter === 'ALL' || r.market.toLowerCase().includes(state.mandiFilter.toLowerCase())
+      );
+      if (rows.length === 0) {
+        list.innerHTML = '<div class="py-3 text-gray-400 text-center">No rates matching selected APMC.</div>';
+        return;
+      }
+      list.innerHTML = rows.map(r => `
+        <div class="py-2.5 flex items-center justify-between gap-2">
+          <div>
+            <div class="text-white font-bold">${r.market} • ${r.crop}</div>
+            <div class="text-[10px] text-gray-400">Min ₹${r.min} | Max ₹${r.max} • ${r.date || 'Live'}</div>
+          </div>
+          <div class="text-right">
+            <div class="text-neonMint font-bold text-sm">₹${r.modal}</div>
+            <div class="text-[9px] text-gray-400">/ Quintal</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function fetchLiveMandiPrices(manual = false) {
+      const btn = document.getElementById('btnRefreshMandi');
+      const meta = document.getElementById('mandiSourceMeta');
+      if (btn) btn.textContent = '⏳ Fetching...';
+      meta.textContent = 'Querying Live Internet APMC Feeds...';
+
+      let updated = false;
+
+      // Method A: Official Government of India Agmarknet Open Data API
+      const ogdKey = (config.dataGovKey || '').trim() || '579b464db66ec23bdd000001cdd3946e44ce4aad7209ff7b23ac571b';
+      try {
+        const controller = new AbortController();
+        const tid = setTimeout(() => controller.abort(), 5000);
+        const url = `https://api.data.gov.in/resource/9ef84268-d588-465a-a308-a864a43d0070?api-key=${encodeURIComponent(ogdKey)}&format=json&limit=40&filters[state]=Karnataka`;
+        const res = await fetch(url, { signal: controller.signal });
+        clearTimeout(tid);
+
+        if (res.ok) {
+          const json = await res.json();
+          if (Array.isArray(json.records) && json.records.length > 0) {
+            const targetMarkets = ['bailhongal', 'belgaum', 'belagavi', 'hubballi', 'hubli', 'dharwad', 'gokak', 'sankeshwar'];
+            let matched = json.records.filter(r => targetMarkets.some(m => (r.market || '').toLowerCase().includes(m) || (r.district || '').toLowerCase().includes(m)));
+            if (matched.length === 0) matched = json.records.slice(0, 8);
+
+            state.mandiRates = matched.slice(0, 10).map(r => ({
+              market: r.market || r.district || 'Karnataka',
+              crop: `${r.commodity || 'Crop'} (${r.variety || 'FAQ'})`,
+              min: parseInt(r.min_price, 10) || 0,
+              modal: parseInt(r.modal_price, 10) || 0,
+              max: parseInt(r.max_price, 10) || 0,
+              date: r.arrival_date || 'Today'
+            }));
+            localStorage.setItem('agri_mandi_cache_v1', JSON.stringify(state.mandiRates));
+            meta.textContent = `✓ Live Agmarknet (data.gov.in) • ${new Date().toLocaleTimeString()}`;
+            updated = true;
+          }
+        }
+      } catch (e) {}
+
+      // Method B: Gemini 3.5 Flash / 3.8 Flash + Live Google Search Grounding
+      if (!updated && (config.geminiKey || '').trim()) {
+        const searchModels = [config.geminiModel || 'gemini-3.5-flash', 'gemini-3.8-flash'];
+        for (const mName of searchModels) {
+          if (updated) break;
+          try {
+            const controller = new AbortController();
+            const tid = setTimeout(() => controller.abort(), 8000);
+            const prompt = `Search the live internet for today's latest Karnataka APMC Mandi commodity prices (INR per Quintal) for Bailhongal, Belagavi, and Hubballi (Onion, Cotton, Maize, Soybean, Sugarcane/Jaggery, Tur Dal). Return ONLY a valid JSON array (no markdown fences) with objects having exact keys: "market", "crop", "min", "modal", "max", "date".`;
+
+            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${mName}:generateContent?key=${encodeURIComponent(config.geminiKey.trim())}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              signal: controller.signal,
+              body: JSON.stringify({
+                tools: [{ google_search: {} }],
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: { thinkingConfig: { thinkingLevel: 'MINIMAL' } }
+              })
+            });
+            clearTimeout(tid);
+            const data = await res.json();
+            const rawText = data?.candidates?.[0]?.content?.parts?.map(p => p.text || '').join('') || '';
+            const match = rawText.match(/\[[\s\S]*\]/);
+            if (match) {
+              const parsed = JSON.parse(match[0]);
+              if (Array.isArray(parsed) && parsed.length > 0) {
+                state.mandiRates = parsed.slice(0, 10);
+                localStorage.setItem('agri_mandi_cache_v1', JSON.stringify(state.mandiRates));
+                meta.textContent = `✓ Live Google Search (${mName}) • ${new Date().toLocaleTimeString()}`;
+                updated = true;
+              }
+            }
+          } catch (e) {}
+        }
+      }
+
+      if (!updated) {
+        meta.textContent = 'Cached Reference Rates (Add Gemini / data.gov.in key or check internet)';
+        if (manual) showToast('Using cached Mandi rates — check connection or API key');
+      } else {
+        if (manual) showToast('Live APMC Market Prices Updated!');
+      }
+
+      renderMandiList();
+      if (btn) btn.textContent = '🔄 Fetch Live';
+    }
+
+    // ================= SOLAR + LIVE WEATHER DIAGNOSTIC METHOD =================
+    async function openSolarDiagnosticModal() {
+      const modal = document.getElementById('solarModal');
+      modal.classList.replace('hidden', 'flex');
+      document.getElementById('modalSolarV').textContent = `${state.solar_volt.toFixed(1)} V`;
+      document.getElementById('modalSolarDust').textContent = `${state.dust_level} µg/m³`;
+      document.getElementById('modalSolarCloud').textContent = '...';
+      const diagEl = document.getElementById('solarDiagnosisText');
+      diagEl.textContent = state.aiLanguage === 'kn' ? 'ಲೈವ್ ಹವಾಮಾನ ಮತ್ತು ಸೋಲಾರ್ ಫಲಕ ಪರಿಶೀಲಿಸಲಾಗುತ್ತಿದೆ...' : 'Checking live weather and solar panel health...';
+
+      const w = await fetchLiveWeatherObject(config.cropLocation);
+      const cloudPct = w ? w.cloudCover : 25;
+      document.getElementById('modalSolarCloud').textContent = `${cloudPct}%`;
+
+      let msg = '';
+      if (state.solar_volt >= 15.0) {
+        msg = state.aiLanguage === 'kn'
+          ? `ಸೋಲಾರ್ ಪ್ಯಾನೆಲ್ ಅತ್ಯುತ್ತಮವಾಗಿ ಕಾರ್ಯನಿರ್ವಹಿಸುತ್ತಿದೆ. ವೋಲ್ಟೇಜ್ ${state.solar_volt.toFixed(1)} ವೋಲ್ಟ್ ಇದೆ ಮತ್ತು ಆಕಾಶದಲ್ಲಿ ಮೋಡ ಶೇಕಡಾ ${cloudPct} ಇದೆ. ಬ್ಯಾಟರಿ ಪೂರ್ಣವಾಗಿ ಚಾರ್ಜ್ ಆಗುತ್ತಿದೆ.`
+          : `Solar panel is generating optimally at ${state.solar_volt.toFixed(1)}V with ${cloudPct}% cloud cover.`;
+      } else if (state.solar_volt < 13.5 && cloudPct < 45 && state.dust_level > 30) {
+        msg = state.aiLanguage === 'kn'
+          ? `ಎಚ್ಚರಿಕೆ: ಬಿಸಿಲು ಚೆನ್ನಾಗಿದ್ದರೂ (ಮೋಡ ಕೇವಲ ಶೇಕಡಾ ${cloudPct}) ಸೋಲಾರ್ ವೋಲ್ಟೇಜ್ ${state.solar_volt.toFixed(1)} ವೋಲ್ಟ್ ಗೆ ಇಳಿದಿದೆ ಮತ್ತು ಧೂಳು ${state.dust_level} ಇದೆ. ಸೋಲಾರ್ ಪ್ಯಾನೆಲ್ ಮೇಲೆ ಧೂಳು ಬಿದ್ದಿರಬಹುದು, ದಯವಿಟ್ಟು ಸ್ವಚ್ಛಗೊಳಿಸಿ.`
+          : `Alert: Sky is mostly clear (${cloudPct}% clouds) yet solar voltage is low (${state.solar_volt.toFixed(1)}V) with dust index ${state.dust_level}. Please clean dust off the solar panel.`;
+      } else if (state.solar_volt < 13.5 && cloudPct >= 45) {
+        msg = state.aiLanguage === 'kn'
+          ? `ಮೋಡ ಕವಿದ ಹವಾಮಾನ (ಶೇಕಡಾ ${cloudPct} ಮೋಡ) ಇರುವುದರಿಂದ ಸೋಲಾರ್ ಉತ್ಪಾದನೆ ${state.solar_volt.toFixed(1)} ವೋಲ್ಟ್ ಗೆ ಇಳಿದಿದೆ. ಪ್ಯಾನೆಲ್ ಸುರಕ್ಷಿತವಾಗಿದೆ.`
+          : `Cloudy weather (${cloudPct}% cloud cover) is causing lower solar output (${state.solar_volt.toFixed(1)}V). Panel hardware is healthy.`;
+      } else {
+        msg = state.aiLanguage === 'kn'
+          ? `ಸೋಲಾರ್ ಪ್ಯಾನೆಲ್ ಸಾಮಾನ್ಯ ಸ್ಥಿತಿಯಲ್ಲಿದೆ (${state.solar_volt.toFixed(1)} ವೋಲ್ಟ್). ಹವಾಮಾನ ತಾಪಮಾನ ${state.temp_celsius} ಡಿಗ್ರಿ ಸೆಲ್ಸಿಯಸ್ ಮತ್ತು ಮೋಡ ಶೇಕಡಾ ${cloudPct} ಇದೆ.`
+          : `Solar panel status normal at ${state.solar_volt.toFixed(1)}V with ${cloudPct}% cloud cover.`;
+      }
+
+      diagEl.textContent = msg;
+    }
+
+    function closeSolarDiagnosticModal() {
+      document.getElementById('solarModal').classList.replace('flex', 'hidden');
+    }
+
+    // ================= STAGE DEMO & HARDWARE CONTROLS =================
+    function simulateSoilADC(adcVal) {
+      state.rawADC = adcVal;
+      recalculateSoilPhysics();
+      showToast(`Soil ADC ${adcVal} → Moisture ${state.M_field.toFixed(1)}%`);
+    }
+
+    function simulateStageEvent(type) {
+      const threatBadge = document.getElementById('threatLevelBadge');
+      const fence = document.getElementById('svgFenceOuter');
+      const boxes = ['tier1Box', 'tier2Box', 'tier3Box'].map(id => document.getElementById(id));
+      const badges = ['tier1Badge', 'tier2Badge', 'tier3Badge'].map(id => document.getElementById(id));
+
+      boxes.forEach(b => b.className = 'bg-black/40 border border-emerald-500/30 rounded-xl p-2 text-center');
+      badges.forEach(b => { b.textContent = 'OK'; b.className = 'text-neonMint font-bold mt-0.5'; });
+      fence.setAttribute('stroke', '#10b981');
+
+      if (type === 'BOAR') {
+        state.threat = 'WILD_BOAR';
+        threatBadge.textContent = '🐗 WILD BOAR DETECTED';
+        threatBadge.className = 'text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40';
+        fence.setAttribute('stroke', '#f59e0b');
+        boxes[0].className = 'bg-amber-500/15 border border-amber-500 rounded-xl p-2 text-center';
+        badges[0].textContent = 'CUT 840ms'; badges[0].className = 'text-amber-300 font-bold mt-0.5';
+        document.getElementById('tier1BreakMs').textContent = '840 ms';
+        VoicePlayer.play('ಎಚ್ಚರಿಕೆ! ಗದ್ದೆಯಲ್ಲಿ ಕಾಡುಹಂದಿ ಪತ್ತೆಯಾಗಿದೆ! ಬಯೋ ಅಕೌಸ್ಟಿಕ್ ಸೈರನ್ ಚಾಲನೆಗೊಂಡಿದೆ.', 'kn-IN');
+      } else if (type === 'CRAWL') {
+        state.threat = 'CRAWLING_HUMAN';
+        threatBadge.textContent = '🪖 CRAWLING INTRUDER';
+        threatBadge.className = 'text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 animate-pulse';
+        fence.setAttribute('stroke', '#f43f5e');
+        boxes[0].className = 'bg-rose-500/15 border border-rose-500 rounded-xl p-2 text-center';
+        badges[0].textContent = 'CUT 2750ms'; badges[0].className = 'text-rose-400 font-bold mt-0.5';
+        document.getElementById('tier1BreakMs').textContent = '2750 ms';
+        triggerStrobeAlert('CRAWLING HUMAN BREACH', 'ಎಚ್ಚರಿಕೆ! ವ್ಯಕ್ತಿ ತೆವಳುತ್ತಾ ಬೇಲಿ ದಾಟುತ್ತಿದ್ದಾನೆ!');
+      } else if (type === 'HUMAN') {
+        state.threat = 'WALKING_HUMAN';
+        threatBadge.textContent = '🚶 HUMAN INTRUDER';
+        threatBadge.className = 'text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/40 animate-pulse';
+        fence.setAttribute('stroke', '#f43f5e');
+        boxes[1].className = 'bg-rose-500/15 border border-rose-500 rounded-xl p-2 text-center';
+        badges[1].textContent = 'BREACH'; badges[1].className = 'text-rose-400 font-bold mt-0.5';
+        triggerStrobeAlert('HUMAN INTRUSION', 'ಅಪಾಯ! ಬೇಲಿ ಹಾರಿ ಮನುಷ್ಯ ಒಳನುಗ್ಗಿದ್ದಾನೆ!');
+      } else {
+        state.threat = 'SECURE';
+        threatBadge.textContent = 'PERIMETER SECURE';
+        threatBadge.className = 'text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-300 border border-emerald-500/30';
+        document.getElementById('tier1BreakMs').textContent = '0 ms';
+        dismissStrobeAlert();
+      }
+    }
+
+    function triggerStrobeAlert(title, msg) {
+      document.getElementById('strobeTitle').textContent = title;
+      document.getElementById('strobeAlertMeta').textContent = msg;
+      const modal = document.getElementById('strobeModal');
+      modal.classList.remove('hidden'); modal.classList.add('flex', 'strobe-active');
+      VoicePlayer.play(msg, 'kn-IN');
+    }
+
+    function dismissStrobeAlert() {
+      const modal = document.getElementById('strobeModal');
+      modal.classList.add('hidden'); modal.classList.remove('flex', 'strobe-active');
+      VoicePlayer.stop();
+      sendFirebaseCommand({ ack_ts: Date.now(), siren_cmd: 'OFF' });
+    }
+
+    function toggleArmState() { setSystemArmedCloud(!state.is_armed); }
+
+    async function setSystemArmedCloud(arm) {
+      state.is_armed = arm;
+      const badge = document.getElementById('systemStateBadge');
+      const btn = document.getElementById('btnQuickArm');
+      const lbl = document.getElementById('labelQuickArm');
+      if (arm) {
+        badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-neonMint"></span> SENTRY GUARD ARMED';
+        badge.className = 'text-[11px] font-mono font-bold tracking-wider uppercase text-neonMint flex items-center gap-1.5';
+        btn.className = 'tesla-pill rounded-2xl py-2.5 flex flex-col items-center justify-center gap-1 border-neonMint/40 bg-emerald-500/15 text-neonMint';
+        lbl.textContent = 'Armed';
+      } else {
+        badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span> SYSTEM DISARMED';
+        badge.className = 'text-[11px] font-mono font-bold tracking-wider uppercase text-amber-300 flex items-center gap-1.5';
+        btn.className = 'tesla-pill rounded-2xl py-2.5 flex flex-col items-center justify-center gap-1 text-gray-400';
+        lbl.textContent = 'Disarmed';
+        simulateStageEvent('RESET');
+      }
+      await sendFirebaseCommand({ arm_system: arm });
+      showToast(arm ? 'Sentry Guard Armed' : 'Sentry Guard Disarmed');
+    }
+
+    function togglePumpQuick() { dispatchPumpCloud(!state.pump_state); }
+
+    function setPumpDuration(min, btn) {
+      state.selectedDuration = min;
+      document.querySelectorAll('.duration-btn').forEach(b => {
+        b.className = 'duration-btn px-2.5 py-1.5 rounded-xl bg-white/5 border border-white/10 text-gray-300 text-[11px] font-mono';
+      });
+      btn.className = 'duration-btn px-2.5 py-1.5 rounded-xl bg-teslaCyan/20 border border-teslaCyan text-teslaCyan text-[11px] font-mono font-bold';
+    }
+
+    async function dispatchPumpCloud(start) {
+      state.pump_state = start;
+      const btn = document.getElementById('btnQuickPump');
+      const lbl = document.getElementById('labelQuickPump');
+      if (start) {
+        btn.className = 'tesla-pill rounded-2xl py-2.5 flex flex-col items-center justify-center gap-1 border-teslaCyan/50 bg-sky-500/20 text-teslaCyan';
+        lbl.textContent = 'Pump On';
+        startLocalTimer(state.selectedDuration * 60);
+        showToast(`Irrigation Pump ON (${state.selectedDuration}m)`);
+      } else {
+        btn.className = 'tesla-pill rounded-2xl py-2.5 flex flex-col items-center justify-center gap-1 text-gray-300';
+        lbl.textContent = 'Pump Off';
+        stopLocalTimer();
+        showToast('Irrigation Pump OFF');
+      }
+      await sendFirebaseCommand({ pump_override: start });
+    }
+
+    async function triggerBioCloud(soundType) {
+      showToast(`Bio-Acoustic: ${soundType} Activated`);
+      const payload = soundType === 'SIREN' ? { siren_cmd: 'ON' } : { bio_trigger: soundType, bio_ts: Date.now() };
+      await sendFirebaseCommand(payload);
+    }
+
+    function startLocalTimer(sec) {
+      stopLocalTimer();
+      state.pumpTimerSec = sec;
+      updateTimerDisplay();
+      state.pumpInterval = setInterval(() => {
+        state.pumpTimerSec--;
+        if (state.pumpTimerSec <= 0) dispatchPumpCloud(false);
+        updateTimerDisplay();
+      }, 1000);
+    }
+
+    function stopLocalTimer() {
+      if (state.pumpInterval) clearInterval(state.pumpInterval);
+      state.pumpTimerSec = 0;
+      updateTimerDisplay();
+    }
+
+    function updateTimerDisplay() {
+      const m = Math.floor(state.pumpTimerSec / 60);
+      const s = state.pumpTimerSec % 60;
+      document.getElementById('pumpCountdownDisplay').textContent = String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+    }
+
+    async function sendFirebaseCommand(payloadObj) {
+      const baseUrl = config.firebaseUrl.endsWith('/') ? config.firebaseUrl : config.firebaseUrl + '/';
+      try {
+        await fetch(`${baseUrl}commands.json`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payloadObj)
+        });
+      } catch (e) {}
+    }
+
+    // ================= LIVE VILLAGE WEATHER =================
+    async function fetchLiveWeatherObject(placeName) {
+      const cleanPlace = (placeName || config.cropLocation || 'Bailhongal').trim();
+      try {
+        const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(cleanPlace)}&count=1&language=en&format=json`);
+        const geoData = await geoRes.json();
+        if (!geoData.results || geoData.results.length === 0) return null;
+
+        const loc = geoData.results[0];
+        const wRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${loc.latitude}&longitude=${loc.longitude}&current=temperature_2m,relative_humidity_2m,cloud_cover,precipitation,wind_speed_10m&daily=precipitation_probability_max&timezone=auto&forecast_days=1`);
+        const wData = await wRes.json();
+        const cur = wData.current;
+        const rainProb = wData.daily?.precipitation_probability_max?.[0] ?? 10;
+
+        state.temp_celsius = cur.temperature_2m;
+        document.getElementById('inpTemp').value = cur.temperature_2m;
+        recalculateSoilPhysics();
+
+        return {
+          place: loc.name,
+          region: loc.admin1 || 'Karnataka',
+          temp: cur.temperature_2m,
+          humidity: cur.relative_humidity_2m,
+          cloudCover: cur.cloud_cover ?? 20,
+          wind: cur.wind_speed_10m,
+          rainProb
+        };
+      } catch (e) {
+        return null;
+      }
+    }
+
+    async function askInstantWeather(town) {
+      const outBox = document.getElementById('dashAiOutputBox');
+      const wCard = document.getElementById('weatherResultCard');
+      outBox.textContent = state.aiLanguage === 'kn' ? `${town} ಹವಾಮಾನ ಪರಿಶೀಲಿಸಲಾಗುತ್ತಿದೆ...` : `Checking live weather for ${town}...`;
+
+      const w = await fetchLiveWeatherObject(town);
+      let finalMsg;
+      if (w) {
+        if ((config.geminiKey || '').trim()) {
+          finalMsg = await executeGeminiWithFullContext(
+            state.aiLanguage === 'kn'
+              ? `${w.place} ಊರಿನ ಹವಾಮಾನ: ತಾಪಮಾನ ${w.temp} ಡಿಗ್ರಿ, ಮೋಡ ${w.cloudCover}%, ಮಳೆ ಸಾಧ್ಯತೆ ${w.rainProb}%, ತೇವಾಂಶ ${w.humidity}%. ಇದರ ಆಧಾರದಲ್ಲಿ ನನ್ನ ಹೊಲದ ಬೆಳೆಗಳಿಗೆ ನೀರಾವರಿ ಮತ್ತು ಸೋಲಾರ್ ಸಲಹೆ ನೀಡಿ.`
+              : `Give weather, solar, and irrigation advice for ${w.place} (${w.temp}°C, clouds ${w.cloudCover}%, rain ${w.rainProb}%, humidity ${w.humidity}%) across my mapped crops.`
+          );
+        } else {
+          finalMsg = state.aiLanguage === 'kn'
+            ? `${w.place} ಪ್ರಸ್ತುತ ಹವಾಮಾನ: ತಾಪಮಾನ ${w.temp} ಡಿಗ್ರಿ ಸೆಲ್ಸಿಯಸ್, ಮೋಡ ಶೇಕಡಾ ${w.cloudCover}, ತೇವಾಂಶ ಶೇಕಡಾ ${w.humidity}, ಮಳೆಯ ಸಾಧ್ಯತೆ ಶೇಕಡಾ ${w.rainProb} ಇದೆ.`
+            : `Live weather in ${w.place}: Temp ${w.temp}°C, Clouds ${w.cloudCover}%, Humidity ${w.humidity}%, Rain probability ${w.rainProb}%.`;
+        }
+      } else {
+        finalMsg = state.aiLanguage === 'kn'
+          ? `${town} ಪ್ರದೇಶದಲ್ಲಿ ಪ್ರಸ್ತುತ ತಾಪಮಾನ ${state.temp_celsius} ಡಿಗ್ರಿ ಸೆಲ್ಸಿಯಸ್ ಇದೆ.`
+          : `Current temperature around ${town} is ${state.temp_celsius}°C.`;
+      }
+
+      outBox.textContent = finalMsg;
+      if (wCard) wCard.textContent = finalMsg;
+      VoicePlayer.play(finalMsg, state.aiLanguage === 'kn' ? 'kn-IN' : 'en-IN');
+    }
+
+    // ================= GEMINI 3.5 FLASH API (THINKING LEVEL MINIMAL + MULTI-MODEL) =================
+    function buildFullFarmContextSummary() {
+      const soilSelect = document.getElementById('fmSoilType');
+      const soilLabel = soilSelect ? soilSelect.selectedOptions[0].text : `K_soil=${state.K_soil}`;
+      const preds = state.latestZonePredictions.map(p =>
+        `${p.zoneLabel}: Crop=${p.crop.en}(${p.crop.kn}), Area=${p.areaText}(${p.pct}%), Kc=${p.crop.kc}, CurrentMoisture=${p.mZone.toFixed(1)}%, CriticalThreshold=${p.crop.threshold}%, LossRate=|dM/dt|=${p.dMdt.toFixed(2)}%/hr, HoursUntilIrrigation=${p.urgent ? 'IRRIGATE NOW (0 hrs)' : p.hoursLeft.toFixed(1) + ' hrs'}`
+      ).join(' | ');
+
+      const mandiSummary = state.mandiRates.slice(0, 6).map(m => `${m.market} ${m.crop}: Rs.${m.modal}/Qtl`).join('; ');
+
+      return `
+FARM PROFILE:
+- Location: ${config.cropLocation}
+- Total Farm Area: ${state.fieldMap.totalArea} ${state.fieldMap.areaUnit}
+- Soil Type: ${soilLabel} (K_soil=${state.K_soil})
+- Crop Pattern: ${state.fieldMap.mode === 'single' ? 'Single Crop' : state.fieldMap.zones.length + ' Multiple Crops'}
+
+LIVE HARDWARE SENSORS:
+- YL-69 ADC: ${state.rawADC}, M_raw: ${state.M_raw.toFixed(1)}%, M_corrected: ${state.M_corr.toFixed(1)}%, Base M_field: ${state.M_field.toFixed(1)}%
+- Ambient Temperature: ${state.temp_celsius}°C, EvapRate: ${state.evapRate}
+- Battery: ${state.battery_pct}%, Solar PV: ${state.solar_volt}V, Dust Index: ${state.dust_level} ug/m3
+- Perimeter Threat: ${state.threat}, System Armed: ${state.is_armed}, Pump Active: ${state.pump_state}
+
+MAPPED CROP ZONES & DIFFERENTIAL DECAY (dM/dt):
+${preds}
+
+LATEST APMC MARKET RATES:
+${mandiSummary}
+      `.trim();
+    }
+
+    function buildInstantEdgeResponse(promptText, reason = '') {
+      const lower = promptText.toLowerCase();
+      const sorted = [...state.latestZonePredictions].sort((a, b) => a.hoursLeft - b.hoursLeft);
+      const top = sorted[0];
+      const note = reason ? ` [${reason}]` : '';
+
+      if (state.aiLanguage === 'en') {
+        if (lower.includes('boar') || lower.includes('security') || lower.includes('fence')) {
+          return `Edge AI${note}: Perimeter is ${state.threat} (${state.is_armed ? 'Armed' : 'Disarmed'}). 3-Tier 38kHz IR fence is active.`;
+        }
+        const zoneList = sorted.map(p => `${p.zoneLabel} ${p.crop.en}: ${p.mZone.toFixed(1)}% (${p.urgent ? 'IRRIGATE NOW' : p.hoursLeft.toFixed(1) + ' hrs left'})`).join('; ');
+        return `Edge AI${note}: ${zoneList}. Priority: ${top ? top.zoneLabel + ' ' + top.crop.en : 'Normal'}.`;
+      }
+
+      if (lower.includes('ಹಂದಿ') || lower.includes('ಭದ್ರತೆ') || lower.includes('ಬೇಲಿ')) {
+        return `ಜಮೀನಿನ ಭದ್ರತಾ ಸ್ಥಿತಿ: ${state.threat === 'SECURE' ? 'ಸಂಪೂರ್ಣ ಸುರಕ್ಷಿತವಾಗಿದೆ' : state.threat}. ಮೂರು ಹಂತದ ಲೇಸರ್ ಬೇಲಿ ಸಕ್ರಿಯವಾಗಿದೆ.`;
+      }
+
+      const knZones = sorted.map(p =>
+        p.urgent
+          ? `${p.crop.kn} ತೇವಾಂಶ ಶೇಕಡಾ ${p.mZone.toFixed(1)} ಇದ್ದು ತಕ್ಷಣ ನೀರು ಹಾಯಿಸಬೇಕು`
+          : `${p.crop.kn} ತೇವಾಂಶ ಶೇಕಡಾ ${p.mZone.toFixed(1)} ಇದ್ದು ಇನ್ನು ${p.hoursLeft.toFixed(1)} ಗಂಟೆಗಳ ನಂತರ ನೀರು ಬೇಕು`
+      ).join('. ');
+
+      return `${config.cropLocation} ಹೊಲದ ವರದಿ: ಒಟ್ಟು ${state.fieldMap.totalArea} ${state.fieldMap.areaUnit === 'Acres' ? 'ಎಕರೆ' : 'ಗುಂಟೆ'} ಜಮೀನಿನಲ್ಲಿ ${knZones}.`;
+    }
+
+    async function executeGeminiWithFullContext(promptText, attachedBase64 = null, attachedMime = null) {
+      const cleanKey = (config.geminiKey || "").trim();
+      const statusEl = document.getElementById('studioKeyStatus');
+      const dashPill = document.getElementById('dashAiSourcePill');
+
+      if (!cleanKey) {
+        if (statusEl) statusEl.textContent = 'API Key: Not Set (Add in ⚙️ Settings)';
+        if (dashPill) dashPill.textContent = 'NO KEY • EDGE';
+        return buildInstantEdgeResponse(promptText, 'No API Key');
+      }
+
+      let extraWeather = '';
+      const weatherKeywords = ['weather', 'rain', 'temperature', 'solar', 'climate', 'ಹವಾಮಾನ', 'ಮಳೆ', 'ತಾಪಮಾನ', 'ಸೋಲಾರ್'];
+      if (!attachedBase64 && weatherKeywords.some(k => promptText.toLowerCase().includes(k))) {
+        const w = await fetchLiveWeatherObject(config.cropLocation);
+        if (w) extraWeather = `\nLIVE WEATHER (${w.place}): Temp=${w.temp}°C, Clouds=${w.cloudCover}%, Humidity=${w.humidity}%, Wind=${w.wind}km/h, RainChance=${w.rainProb}%.`;
+      }
+
+      const farmContext = buildFullFarmContextSummary() + extraWeather;
+
+      const langDirective = state.aiLanguage === 'kn'
+        ? `Reply strictly in pure Kannada script (ಕನ್ನಡ ಲಿಪಿಯಲ್ಲಿ ಮಾತ್ರ). Do NOT put English words inside Kannada sentences; write crop names and units in Kannada script (ಉದಾ: ಶೇಕಡಾ, ಗಂಟೆ, ಎಕರೆ, ಈರುಳ್ಳಿ, ಹತ್ತಿ, ಮೆಕ್ಕೆಜೋಳ).`
+        : `Reply clearly and concisely in English.`;
+
+      const combinedPrompt = `You are AgriGuard Pro AI, an agricultural expert for Karnataka farmers. Use the live farm profile, crop map, differential decay (dM/dt), market rates, and sensor telemetry below to answer the farmer's question accurately.
+${langDirective}
+Do not use markdown asterisks (*), hashtags (#), or bullet symbols (-). Keep the reply clear and practical (2 to 4 sentences).
+
+${farmContext}
+
+FARMER QUESTION: ${promptText}`;
+
+      const parts = [];
+      if (attachedBase64 && attachedMime) {
+        parts.push({ inlineData: { mimeType: attachedMime, data: attachedBase64 } });
+      }
+      parts.push({ text: combinedPrompt });
+
+      // Prioritize user-selected model (gemini-3.5-flash), then 3.5-flash-lite & 3.8-flash with thinkingLevel: MINIMAL
+      const preferred = config.geminiModel || 'gemini-3.5-flash';
+      const orderedNames = [...new Set([preferred, 'gemini-3.5-flash', 'gemini-3.5-flash-lite', 'gemini-3.8-flash'])];
+
+      let lastErr = '';
+      for (const modelName of orderedNames) {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
+        try {
+          const t0 = performance.now();
+          const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${encodeURIComponent(cleanKey)}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            signal: controller.signal,
+            body: JSON.stringify({
+              contents: [{ parts }],
+              generationConfig: {
+                maxOutputTokens: 600,
+                thinkingConfig: { thinkingLevel: 'MINIMAL' }
+              }
+            })
+          });
+          clearTimeout(timeoutId);
+          const data = await res.json();
+          const ms = Math.round(performance.now() - t0);
+
+          if (res.ok && data.candidates?.[0]?.content?.parts) {
+            const replyText = data.candidates[0].content.parts.map(p => p.text || '').join('').replace(/[\*\_#`]/g, '').trim();
+            if (replyText) {
+              if (statusEl) {
+                statusEl.textContent = `${modelName} • ${ms}ms ✓`;
+                statusEl.className = 'text-[10px] font-mono text-neonMint';
+              }
+              if (dashPill) dashPill.textContent = `${modelName.toUpperCase()} • ${ms}ms`;
+              return replyText;
+            }
+          } else {
+            lastErr = data?.error?.message || `HTTP ${res.status}`;
+            if ((res.status === 400 && lastErr.toLowerCase().includes('api key')) || res.status === 403) break;
+          }
+        } catch (err) {
+          clearTimeout(timeoutId);
+          lastErr = err.name === 'AbortError' ? 'Timeout (>8s)' : err.message;
+        }
+      }
+
+      if (statusEl) {
+        statusEl.textContent = `Edge Fallback (${lastErr})`;
+        statusEl.className = 'text-[10px] font-mono text-rose-400';
+      }
+      if (dashPill) dashPill.textContent = `EDGE (${lastErr.slice(0, 18)})`;
+      showToast(`Gemini API Error: ${lastErr.slice(0, 45)}`);
+      return buildInstantEdgeResponse(promptText, lastErr);
+    }
+
+    async function requestDashAi(presetText) {
+      const outBox = document.getElementById('dashAiOutputBox');
+      outBox.textContent = state.aiLanguage === 'kn' ? `⚡ ${config.geminiModel} ಗೆ ಮಾಹಿತಿ ಕಳುಹಿಸಲಾಗುತ್ತಿದೆ...` : `⚡ Sending full crop map to ${config.geminiModel}...`;
+      const reply = await executeGeminiWithFullContext(presetText);
+      outBox.textContent = reply;
+      VoicePlayer.play(reply, state.aiLanguage === 'kn' ? 'kn-IN' : 'en-IN');
+    }
+
+    // ================= KANNADA NUMBER-TO-WORDS SPEECH PREPROCESSOR + STRICT VOICE PICKER =================
+    const KN_ONES = ['ಸೊನ್ನೆ','ಒಂದು','ಎರಡು','ಮೂರು','ನಾಲ್ಕು','ಐದು','ಆರು','ಏಳು','ಎಂಟು','ಒಂಬತ್ತು','ಹತ್ತು','ಹನ್ನೊಂದು','ಹನ್ನೆರಡು','ಹದಿಮೂರು','ಹದಿನಾಲ್ಕು','ಹದಿನೈದು','ಹದಿನಾರು','ಹದಿನೇಳು','ಹದಿನೆಂಟು','ಹತ್ತೊಂಬತ್ತು'];
+    const KN_TENS = ['','','ಇಪ್ಪತ್ತು','ಮೂವತ್ತು','ನಲವತ್ತು','ಐವತ್ತು','ಅರವತ್ತು','ಎಪ್ಪತ್ತು','ಎಂಬತ್ತು','ತೊಂಬತ್ತು'];
+    const KN_TEN_PREFIX = ['','','ಇಪ್ಪತ್ತ','ಮೂವತ್ತ','ನಲವತ್ತ','ಐವತ್ತ','ಅರವತ್ತ','ಎಪ್ಪತ್ತ','ಎಂಬತ್ತ','ತೊಂಬತ್ತ'];
+
+    function intToKannadaWords(num) {
+      const n = Math.floor(num);
+      if (isNaN(n) || n < 0) return String(num);
+      if (n < 20) return KN_ONES[n];
+      if (n < 100) {
+        const t = Math.floor(n / 10), o = n % 10;
+        return o === 0 ? KN_TENS[t] : KN_TEN_PREFIX[t] + KN_ONES[o];
+      }
+      if (n < 1000) {
+        const h = Math.floor(n / 100), rem = n % 100;
+        if (rem === 0) return h === 1 ? 'ನೂರು' : KN_ONES[h] + ' ನೂರು';
+        return (h === 1 ? 'ನೂರಾ ' : KN_ONES[h] + ' ನೂರ ') + intToKannadaWords(rem);
+      }
+      if (n < 100000) {
+        const th = Math.floor(n / 1000), rem = n % 1000;
+        const thWord = th === 1 ? 'ಒಂದು ಸಾವಿರ' : intToKannadaWords(th) + ' ಸಾವಿರ';
+        return rem === 0 ? thWord : (th === 1 ? 'ಒಂದು ಸಾವಿರದ ' : intToKannadaWords(th) + ' ಸಾವಿರದ ') + intToKannadaWords(rem);
+      }
+      return String(n);
+    }
+
+    function decimalToKannadaWords(numStr) {
+      const parts = numStr.split('.');
+      const wholeWord = intToKannadaWords(parseInt(parts[0], 10));
+      if (parts.length === 1) return wholeWord;
+      const fracWords = parts[1].split('').map(d => KN_ONES[parseInt(d, 10)] || d).join(' ');
+      return `${wholeWord} ಪಾಯಿಂಟ್ ${fracWords}`;
+    }
+
+    function formatTextForKannadaSpeech(text) {
+      let s = text
+        .replace(/[\*\_#`]/g, '')
+        .replace(/[\u{1F300}-\u{1F9FF}]/gu, '')
+        .replace(/\|dM\/dt\|/gi, 'ತೇವಾಂಶ ಇಳಿಕೆ ದರ')
+        .replace(/dM\/dt/gi, 'ತೇವಾಂಶ ಇಳಿಕೆ ದರ')
+        .replace(/M_field/gi, 'ಕ್ಷೇತ್ರ ತೇವಾಂಶ')
+        .replace(/M_zone/gi, 'ವಲಯ ತೇವಾಂಶ')
+        .replace(/K_soil/gi, 'ಮಣ್ಣಿನ ಗುಣಾಂಕ');
+
+      s = s.replace(/(\d+(?:\.\d+)?)\s*%/g, (_, num) => ` ಶೇಕಡಾ ${decimalToKannadaWords(num)} `);
+      s = s.replace(/(\d+(?:\.\d+)?)\s*°\s*C/gi, (_, num) => ` ${decimalToKannadaWords(num)} ಡಿಗ್ರಿ ಸೆಲ್ಸಿಯಸ್ `);
+      s = s.replace(/(\d+(?:\.\d+)?)\s*V\b/gi, (_, num) => ` ${decimalToKannadaWords(num)} ವೋಲ್ಟ್ `);
+      s = s.replace(/(\d+(?:\.\d+)?)\s*(hrs?|hours?)\b/gi, (_, num) => ` ${decimalToKannadaWords(num)} ಗಂಟೆ `);
+      s = s.replace(/\b(\d+\.\d+)\b/g, (_, num) => ` ${decimalToKannadaWords(num)} `);
+      s = s.replace(/\b(\d{1,5})\b/g, (_, num) => ` ${intToKannadaWords(parseInt(num, 10))} `);
+
+      return s.replace(/\s+/g, ' ').trim();
+    }
+
+    function initSpeechRecognition() {
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SR) return;
+      state.speechRecognition = new SR();
+      state.speechRecognition.interimResults = false;
+      state.speechRecognition.maxAlternatives = 1;
+    }
+
+    function startInstantVoiceAssistant() {
+      if (!state.speechRecognition) { showToast('Voice mic unavailable on this browser'); return; }
+      const orb = document.getElementById('heroVoiceOrbBtn');
+      const headline = document.getElementById('voiceOrbHeadline');
+
+      if (state.isListening) {
+        state.speechRecognition.stop();
+        state.isListening = false;
+        orb.classList.remove('listening');
+        headline.textContent = state.aiLanguage === 'kn' ? 'ಮಾತನಾಡಲು ಮೈಕ್ ಒತ್ತಿರಿ' : 'Tap Mic to Speak';
+        return;
+      }
+
+      VoicePlayer.stop();
+      state.speechRecognition.lang = state.aiLanguage === 'kn' ? 'kn-IN' : 'en-IN';
+      state.isListening = true;
+      orb.classList.add('listening');
+      headline.textContent = state.aiLanguage === 'kn' ? '🔴 ಕೇಳಿಸಿಕೊಳ್ಳುತ್ತಿದೆ... ಮಾತನಾಡಿ' : '🔴 Listening... Speak now';
+
+      state.speechRecognition.onresult = async (e) => {
+        const spokenText = e.results[0][0].transcript;
+        state.isListening = false;
+        orb.classList.remove('listening');
+        headline.textContent = `"${spokenText}"`;
+        await requestDashAi(spokenText);
+      };
+
+      state.speechRecognition.onerror = () => {
+        state.isListening = false;
+        orb.classList.remove('listening');
+        headline.textContent = state.aiLanguage === 'kn' ? 'ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ (Tap Mic)' : 'Tap Mic to Retry';
+      };
+
+      state.speechRecognition.onend = () => {
+        state.isListening = false;
+        orb.classList.remove('listening');
+      };
+
+      state.speechRecognition.start();
+    }
+
+    function toggleVoiceDictation() {
+      if (!state.speechRecognition) return showToast('Voice mic not supported');
+      const micBtn = document.getElementById('aiMicBtn');
+      state.speechRecognition.lang = state.aiLanguage === 'kn' ? 'kn-IN' : 'en-IN';
+      micBtn.classList.add('listening');
+      state.speechRecognition.onresult = (e) => {
+        micBtn.classList.remove('listening');
+        document.getElementById('aiPromptInput').value = e.results[0][0].transcript;
+        dispatchUserGeminiPrompt();
+      };
+      state.speechRecognition.onerror = () => micBtn.classList.remove('listening');
+      state.speechRecognition.start();
+    }
+
+    let cachedVoices = [];
+    function refreshVoices() {
+      if ('speechSynthesis' in window) cachedVoices = window.speechSynthesis.getVoices();
+    }
+    if ('speechSynthesis' in window) {
+      refreshVoices();
+      window.speechSynthesis.onvoiceschanged = refreshVoices;
+    }
+
+    const VoicePlayer = {
+      isPlaying: false,
+      queue: [],
+      idx: 0,
+      activeLang: 'kn-IN',
+
+      pickStrictVoice(lang) {
+        refreshVoices();
+        const prefix = lang.split('-')[0].toLowerCase();
+        if (prefix === 'kn') {
+          return cachedVoices.find(v => v.lang.toLowerCase().startsWith('kn') || v.name.toLowerCase().includes('kannada')) || null;
+        }
+        return cachedVoices.find(v => v.lang.toLowerCase().includes('en-in')) ||
+               cachedVoices.find(v => v.lang.toLowerCase().startsWith('en')) || null;
+      },
+
+      play(text, lang = 'kn-IN') {
+        if (!('speechSynthesis' in window)) return;
+        this.stop();
+        window.speechSynthesis.resume();
+
+        const prepared = lang.startsWith('kn')
+          ? formatTextForKannadaSpeech(text)
+          : text.replace(/[\*\_#`]/g, '').replace(/[\u{1F300}-\u{1F9FF}]/gu, '').trim();
+        if (!prepared) return;
+
+        const chunks = prepared.match(/[^.!?।॥\n]+[.!?।॥\n]*/g) || [prepared];
+        this.queue = chunks.map(c => c.trim()).filter(Boolean);
+        this.idx = 0;
+        this.activeLang = lang;
+        this.isPlaying = true;
+        this.syncUI();
+        this.speakNext();
+      },
+
+      speakNext() {
+        if (!this.isPlaying || this.idx >= this.queue.length) {
+          this.isPlaying = false;
+          this.syncUI();
+          return;
+        }
+        const u = new SpeechSynthesisUtterance(this.queue[this.idx]);
+        const strictVoice = this.pickStrictVoice(this.activeLang);
+        if (strictVoice) u.voice = strictVoice;
+        u.lang = this.activeLang;
+        u.rate = 0.94;
+        u.onend = () => { this.idx++; this.speakNext(); };
+        u.onerror = () => { this.idx++; this.speakNext(); };
+        window.speechSynthesis.speak(u);
+      },
+
+      playFromElement(btn) {
+        const card = btn.closest('.tesla-glass');
+        const txt = card ? card.querySelector('.bubble-text-content')?.innerText : '';
+        if (txt) this.play(txt, state.aiLanguage === 'kn' ? 'kn-IN' : 'en-IN');
+      },
+
+      stop() {
+        this.isPlaying = false;
+        this.queue = [];
+        this.idx = 0;
+        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+        this.syncUI();
+      },
+
+      syncUI() {
+        const bar = document.getElementById('floatingVoiceBar');
+        const lbl = document.getElementById('floatingVoiceLabel');
+        if (lbl) lbl.textContent = this.activeLang.startsWith('kn') ? '🔊 ಕನ್ನಡದಲ್ಲಿ ಓದುತ್ತಿದೆ...' : '🔊 Speaking...';
+        if (this.isPlaying) { bar.classList.remove('-translate-y-32'); bar.classList.add('translate-y-0'); }
+        else { bar.classList.remove('translate-y-0'); bar.classList.add('-translate-y-32'); }
+      }
+    };
+
+    function setAiLanguage(lang) {
+      state.aiLanguage = lang;
+      const knClasses = lang === 'kn' ? "px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-teslaEmerald text-black" : "px-2.5 py-0.5 rounded-full text-[11px] text-gray-400";
+      const enClasses = lang === 'en' ? "px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-teslaCyan text-black" : "px-2.5 py-0.5 rounded-full text-[11px] text-gray-400";
+      ['langBtnKn', 'dashLangKn'].forEach(id => { const el = document.getElementById(id); if (el) el.className = knClasses; });
+      ['langBtnEn', 'dashLangEn'].forEach(id => { const el = document.getElementById(id); if (el) el.className = enClasses; });
+      document.getElementById('voiceOrbHeadline').textContent = lang === 'kn' ? 'ಮಾತನಾಡಲು ಮೈಕ್ ಒತ್ತಿರಿ (Tap Mic to Ask)' : 'Tap Mic to Ask Anything';
+      document.getElementById('dashListenText').textContent = lang === 'kn' ? 'ಕೇಳಿ (Listen)' : 'Listen';
+    }
+
+    function handleImageFileSelected(e) {
+      const file = e.target.files[0]; if (!file) return;
+      const reader = new FileReader();
+      state.studioAttachedMime = file.type; state.studioAttachedName = file.name;
+      reader.onload = (evt) => {
+        state.studioAttachedBase64 = evt.target.result.split(',')[1];
+        document.getElementById('studioPendingFileName').textContent = file.name;
+        document.getElementById('aiPendingTray').classList.replace('hidden', 'flex');
+        if (file.type.startsWith('image/')) {
+          document.getElementById('pendingImageThumb').src = evt.target.result;
+          document.getElementById('pendingImageThumb').classList.remove('hidden');
+        } else { document.getElementById('studioPendingFileIcon').classList.remove('hidden'); }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function clearPendingImage() {
+      state.studioAttachedBase64 = null;
+      document.getElementById('aiPendingTray').classList.replace('flex', 'hidden');
+    }
+
+    async function dispatchUserGeminiPrompt() {
+      const input = document.getElementById('aiPromptInput');
+      const text = input.value.trim() || (state.studioAttachedBase64 ? "ಈ ಬೆಳೆಯ ಎಲೆಯನ್ನು ಪರಿಶೀಲಿಸಿ ಪರಿಹಾರ ತಿಳಿಸಿ." : "");
+      if (!text) return;
+
+      const stream = document.getElementById('aiChatStream');
+      const uDiv = document.createElement('div');
+      uDiv.className = "ml-auto max-w-[82%] bg-emerald-500/20 border border-emerald-400/40 rounded-3xl rounded-tr-md px-4 py-2.5 text-xs sm:text-sm text-white";
+      uDiv.textContent = text;
+      stream.appendChild(uDiv);
+
+      const b64 = state.studioAttachedBase64, mime = state.studioAttachedMime;
+      input.value = ''; clearPendingImage();
+
+      const loadDiv = document.createElement('div');
+      loadDiv.className = "max-w-[88%] tesla-glass rounded-3xl rounded-tl-md p-3.5 text-xs text-teslaCyan font-mono";
+      loadDiv.textContent = `⚡ Sending full field & crop context to ${config.geminiModel}...`;
+      stream.appendChild(loadDiv);
+      stream.scrollTop = stream.scrollHeight;
+
+      const reply = await executeGeminiWithFullContext(text, b64, mime);
+      loadDiv.remove();
+
+      const aDiv = document.createElement('div');
+      aDiv.className = "max-w-[88%] tesla-glass rounded-3xl rounded-tl-md p-3.5 text-xs sm:text-sm space-y-2 border border-white/10";
+      const p = document.createElement('p');
+      p.className = "bubble-text-content text-gray-100 leading-relaxed";
+      p.textContent = reply;
+      const btn = document.createElement('button');
+      btn.className = "px-3 py-1 rounded-full bg-teslaCyan/20 border border-teslaCyan/40 text-teslaCyan font-bold text-[11px]";
+      btn.textContent = "🔊 ಕೇಳಿ";
+      btn.onclick = function () { VoicePlayer.playFromElement(this); };
+
+      aDiv.appendChild(p);
+      aDiv.appendChild(btn);
+      stream.appendChild(aDiv);
+      stream.scrollTop = stream.scrollHeight;
+      VoicePlayer.play(reply, state.aiLanguage === 'kn' ? 'kn-IN' : 'en-IN');
+    }
+
+    // ================= FIREBASE POLLING (1-TO-1 WITH ESP32) =================
+    async function pollFirebaseTelemetry() {
+      const baseUrl = config.firebaseUrl.endsWith('/') ? config.firebaseUrl : config.firebaseUrl + '/';
+      const dot = document.getElementById('cloudDot');
+      const txt = document.getElementById('cloudText');
+      try {
+        const res = await fetch(`${baseUrl}telemetry.json`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data) {
+            if (data.battery_pct !== undefined) state.battery_pct = Math.round(data.battery_pct);
+            if (data.solar_volt !== undefined) {
+              state.solar_volt = data.solar_volt;
+              document.getElementById('gaugeSolar').textContent = Number(state.solar_volt).toFixed(1);
+            }
+            if (data.dust_level !== undefined) state.dust_level = data.dust_level;
+            if (data.temp_c !== undefined) {
+              state.temp_celsius = data.temp_c;
+              document.getElementById('inpTemp').value = data.temp_c;
+            }
+            if (data.adc_raw !== undefined) { state.rawADC = data.adc_raw; recalculateSoilPhysics(); }
+            if (data.threat_status && data.threat_status !== 'SECURE' && data.threat_status !== state.threat) {
+              if (data.threat_status === 'WILD_BOAR') simulateStageEvent('BOAR');
+              else if (data.threat_status === 'CRAWLING_HUMAN') simulateStageEvent('CRAWL');
+              else simulateStageEvent('HUMAN');
+            }
+          }
+          dot.className = 'w-2 h-2 rounded-full bg-neonMint';
+          txt.textContent = `${state.battery_pct}% • LIVE`;
+        }
+      } catch (e) {
+        dot.className = 'w-2 h-2 rounded-full bg-amber-400';
+        txt.textContent = `${state.battery_pct}% • EDGE`;
+      }
+    }
+
+    function toggleConfigModal() {
+      const m = document.getElementById('configModal');
+      m.classList.toggle('hidden'); m.classList.toggle('flex');
+    }
+
+    function updateApiKeyBadge() {
+      const hasKey = Boolean((config.geminiKey || '').trim());
+      const st = document.getElementById('studioKeyStatus');
+      const hdr = document.getElementById('studioHeaderModelLabel');
+      if (hdr) hdr.textContent = `✦ ${config.geminiModel} • Full Farm Context`;
+      if (st) {
+        st.textContent = hasKey ? `API Key: Configured ✓ (${config.geminiModel})` : 'API Key: Not Set (Add in ⚙️)';
+        st.className = hasKey ? 'text-[10px] font-mono text-neonMint' : 'text-[10px] font-mono text-amber-300';
+      }
+    }
+
+    function saveAndReconnect() {
+      config.firebaseUrl = document.getElementById('cfgFirebaseUrl').value.trim();
+      config.cropLocation = document.getElementById('cfgCropLocation').value.trim() || 'Bailhongal';
+      config.geminiModel = document.getElementById('cfgGeminiModel').value || 'gemini-3.5-flash';
+      config.geminiKey = document.getElementById('cfgGeminiKey').value.trim();
+      config.dataGovKey = document.getElementById('cfgDataGovKey').value.trim();
+
+      localStorage.setItem('agri_fb_url', config.firebaseUrl);
+      localStorage.setItem('agri_crop_loc', config.cropLocation);
+      localStorage.setItem('agri_gemini_model', config.geminiModel);
+      localStorage.setItem('agri_gemini_key', config.geminiKey);
+      localStorage.setItem('agri_datagov_key', config.dataGovKey);
+
+      document.getElementById('headerLocationSub').textContent = `${config.cropLocation} Sector • Kalpavruksha PU`;
+      updateApiKeyBadge();
+      toggleConfigModal();
+      pollFirebaseTelemetry();
+      fetchLiveMandiPrices(false);
+      showToast(`Saved (${config.geminiModel})`);
+    }
+
+    function showToast(msg) {
+      const p = document.getElementById('toastPill');
+      p.textContent = msg; p.classList.replace('-translate-y-32', 'translate-y-0');
+      setTimeout(() => p.classList.replace('translate-y-0', '-translate-y-32'), 2600);
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('cfgFirebaseUrl').value = config.firebaseUrl;
+      document.getElementById('cfgCropLocation').value = config.cropLocation;
+      document.getElementById('cfgGeminiModel').value = config.geminiModel;
+      document.getElementById('cfgGeminiKey').value = config.geminiKey;
+      document.getElementById('cfgDataGovKey').value = config.dataGovKey;
+      document.getElementById('headerLocationSub').textContent = `${config.cropLocation} Sector • Kalpavruksha PU`;
+      updateApiKeyBadge();
+      initSpeechRecognition();
+      loadFieldMapFromStorage();
+      recalculateSoilPhysics();
+      renderMandiList();
+      pollFirebaseTelemetry();
+      fetchLiveMandiPrices(false);
+      setInterval(pollFirebaseTelemetry, 2000);
+    });
+  </script>
+</body>
+</html>
+
+
